@@ -1,21 +1,20 @@
 # The solver of games is used to build, train,
 # test and manage the machines for games.
 import machine
+import pickle
 
 class Solver:
-    def __init__(self,pwd):
+    def __init__(self,pwd="./machines/"):
         self.pwd = pwd
         self.machines = list()
 
 # Build a new machine.
-    def new(self,game_info,machine_info,neworold):
-        if neworold == "old":
-            self.machines[old] = load("old")
-        elif machine_info["type"] == "SVM":
+    def new(self,game_info,machine_info,machine_name):
+        if machine_info["type"] == "SVM":
             newm = machine.SVM(game_info["moves"],
                                machine_info["gamma"],
                                machine_info["no_features"])
-            item = {"name":neworold,
+            item = {"name":machine_name,
                     "game_type":game_info["type"],
                     "game_size":game_info["size"],
                     "machine_type":machine_info["type"],
@@ -36,11 +35,25 @@ class Solver:
             for idx in range(len(self.machines)):
                 print idx," ",self.machines[idx]["name"]
 
-## Save a machine
-#    def save(self):
-#        save(self)
-#
+# Save a machine. The names of machines within the same type
+# cannot duplicate.
+    def save(self,midx):
+        item = self.machines[midx]
+        machine_type = item["machine_type"]
+        machine_name = item["name"]
+        pkl_filename = self.pwd + machine_type + "-" + machine_name + ".pkl"
+        pkl_file = open(pkl_filename,"wb+")
+        ans = pickle.dump(item,pkl_file)
+        pkl_file.close()
+        return ans
+
+# Load a machine
+    def load(self,machine_type,machine_name):
+        pkl_filename = self.pwd + machine_type + "-" + machine_name + ".pkl"
+        pkl_file = open(pkl_filename,'rb')
+        item = pickle.load(pkl_file)
+        pkl_file.close()
+        self.machines.append(item)
+
 ## Remove a machine from solver
 #    def remove(self):
-
-
