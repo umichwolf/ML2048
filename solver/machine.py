@@ -17,7 +17,7 @@ class SVM(SGDClassifier):
 # of the averaged 2 norm square of difference between
 # samples.
         self.rbf_features = RBFSampler(gamma=gamma,
-                                       random_state=no_features)
+                                       n_components=no_features)
 
     def train(self,X,Y):
         X_features = self.rbf_features.fit_transform(X)
