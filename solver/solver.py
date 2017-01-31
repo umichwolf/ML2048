@@ -25,10 +25,17 @@ class Solver:
                     "machine":newm}
             self.machines.append(item)
 
-## Show the list of machine
-#    def show(self):
-#        print self.machine
-#
+# Show the list of machine
+    def show(self,l_s="s"):
+        if len(self.machines)==0:
+            print "No machines have been loaded or built yet!"
+        if l_s=="l":
+            for idx in range(len(self.machines)):
+                print idx,"\n",self.machines[idx]
+        else:
+            for idx in range(len(self.machines)):
+                print idx," ",self.machines[idx]["name"]
+
 ## Save a machine
 #    def save(self):
 #        save(self)
