@@ -3,27 +3,37 @@
 import machine
 
 class Solver:
-    def __init__(self, pwd):
-        dict.__init__(self)
+    def __init__(self,pwd):
         self.pwd = pwd
-        self.machines = dict()
+        self.machines = list()
 
 # Build a new machine.
-    def new(self, gameinfo, machine_type, neworold):
-        if neworold = "old"
+    def new(self,game_info,machine_info,neworold):
+        if neworold == "old":
             self.machines[old] = load("old")
-        if machine_type = "type":
-            self.machines[gameinfo] = machine.machine_type(gameinfo)
+        elif machine_info["type"] == "SVM":
+            newm = machine.SVM(game_info["moves"],
+                               machine_info["gamma"],
+                               machine_info["no_features"])
+            item = {"name":neworold,
+                    "game_type":game_info["type"],
+                    "game_size":game_info["size"],
+                    "machine_type":machine_info["type"],
+                    "gamma":machine_info["gamma"],
+                    "no_features":machine_info["no_features"],
+                    "machine_type":machine_info["type"],
+                    "machine":newm}
+            self.machines.append(item)
 
-# Show the list of machine
-    def show(self):
-        print self.machine
-
-# Save a machine
-    def save(self):
-        save(self)
-
-# Remove a machine from solver
-    def remove(self):
+## Show the list of machine
+#    def show(self):
+#        print self.machine
+#
+## Save a machine
+#    def save(self):
+#        save(self)
+#
+## Remove a machine from solver
+#    def remove(self):
 
 
