@@ -1,0 +1,4 @@
+
+2048 -j playselect -p m:naive o:outputfinal.txt np:20 ns:1000
+
+
