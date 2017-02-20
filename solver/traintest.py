@@ -27,24 +27,27 @@ game_info = {"type":"2048",
              "size":4,
              "moves":["w","a","s","d"]}
 machine_info = {"type":"SVM",
-                "gamma":0.01,
-                "no_features":20}
+                "gamma":0.001,
+                "no_features":500,
+                "alpha":10**(-7)}
 
 mgr = Msolver.Solver()
-# mgr.new(game_info,machine_info,"train1")
-mgr.load('SVM','train1')
+#mgr.load('SVM','train1')
 data_list = np.array(data_list)
 data_list[data_list==0] = 1
 data_list = np.log(data_list)/np.log(2)
-# mgr.machines[0]["machine"].train(data_list,move_list)
-score = 0
-for idx in range(len(move_list)):
-    pre_list = mgr.machines[0]["machine"].test([data_list[idx,:]])
-    move_value = 0
-    for key,value in pre_list.items():
-        if value > move_value:
-            move = key
-    print move,' ',move_list[idx]
-    if move==move_list[idx]:
-        score = score + 1
-print score,' ',len(move_list)
+mgr.new(game_info,machine_info,"train1")
+mgr.machines[0]["machine"].train(data_list,move_list)
+
+### check classification accuracy of machine 
+#score = 0
+#for idx in range(len(move_list)):
+#    pre_list = mgr.machines[0]["machine"].test([data_list[idx,:]])
+#    move_value = 0
+#    for key,value in pre_list.items():
+#        if value > move_value:
+#            move = key
+#    print move,' ',move_list[idx]
+#    if move==move_list[idx]:
+#        score = score + 1
+#print score,' ',len(move_list)

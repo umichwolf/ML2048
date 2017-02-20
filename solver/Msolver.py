@@ -13,13 +13,15 @@ class Solver:
         if machine_info["type"] == "SVM":
             newm = machine.SVM(game_info["moves"],
                                machine_info["gamma"],
-                               machine_info["no_features"])
+                               machine_info["no_features"],
+                               machine_info["alpha"])
             item = {"name":machine_name,
                     "game_type":game_info["type"],
                     "game_size":game_info["size"],
                     "machine_type":machine_info["type"],
                     "gamma":machine_info["gamma"],
                     "no_features":machine_info["no_features"],
+                    "alpha":machine_info["alpha"],
                     "machine_type":machine_info["type"],
                     "machine":newm}
             self.machines.append(item)
@@ -47,13 +49,14 @@ class Solver:
         pkl_file.close()
         return ans
 
-# Load a machine
+# Load a machine, and return its number.
     def load(self,machine_type,machine_name):
         pkl_filename = self.pwd + machine_type + "-" + machine_name + ".pkl"
         pkl_file = open(pkl_filename,'rb')
         item = pickle.load(pkl_file)
         pkl_file.close()
         self.machines.append(item)
+        return len(self.machines)
 
 ## Remove a machine from solver
 #    def remove(self):

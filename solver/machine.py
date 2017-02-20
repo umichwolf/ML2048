@@ -4,12 +4,13 @@ from sklearn.kernel_approximation import RBFSampler
 from sklearn.linear_model import SGDClassifier
 
 class SVM(SGDClassifier):
-    def __init__(self,classes,gamma=1,no_features=10):
+    def __init__(self,classes,gamma=1,no_features=10,alpha=10**(-5)):
         SGDClassifier.__init__(self)
         self.gamma = gamma
         self.no_features = no_features
         self.classes = classes
         self.loss = "log"
+        self.alpha = alpha
 # Establish the random kernel when the machine is
 # built for the first time. Then it will be a constant
 # along with the machine.
@@ -22,6 +23,8 @@ class SVM(SGDClassifier):
     def train(self,X,Y):
         X_features = self.rbf_features.fit_transform(X)
         self.partial_fit(X_features,Y,self.classes)
+        score = self.score(X_features,Y)
+        print score
 
     def test(self,X):
         X_features = self.rbf_features.fit_transform(X)

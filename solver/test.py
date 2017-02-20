@@ -1,4 +1,4 @@
-import solver
+import Msolver
 import numpy as np
 
 # Initialize parameters
@@ -11,8 +11,8 @@ machine_info = {"type":"SVM",
                 "gamma":1,
                 "no_features":3}
 
-# Initialize solver manager
-mgr = solver.Solver()
+# Initialize Msolver manager
+mgr = Msolver.Solver()
 
 # Build a new machine
 mgr.new(game_info,machine_info,"test1")
