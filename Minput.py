@@ -53,7 +53,7 @@ def input_try():
 	return order_organized
 	
 def input_readline(line):
-	dict = {
+	result_dict = {
 		"time": time.asctime( time.localtime(time.time()) ),
 		"game": None,
 		"job": None,
@@ -69,14 +69,14 @@ def input_readline(line):
 	
 	try:
 		cur_order = re.findall('^(\S+) ',line)
-		dict["game"] = cur_order[0]
+		result_dict["game"] = cur_order[0]
 	except:
 		pass
 	
 	for key, value in order_dict.items():
-		dict[key] = para_extract(order_dict,key,line)
+		result_dict[key] = para_extract(order_dict,key,line)
 	
-	return dict
+	return result_dict
 	
 def para_extract(order_dict,str,line):
 	para = None
