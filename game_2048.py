@@ -183,8 +183,10 @@ class Game_play(Game):
 			}
 		self.method_dict = {
 			"naive": self._2048_naivesolver,
-			"ml": self._2048_naivesolver
+			"ml": self._2048_mlsolver
 			}
+        if (order["para"])["method"] == 'ml':
+            n_machine = solvermgr.load((order["para"])["tool"],(order["para"])["name"])
 		parameter = list()
 		Game.__init__(self,parameter)
 		self.data = list()
@@ -295,12 +297,19 @@ class Game_play(Game):
 		#print "= = = = ="
 		#self.printout()
 				
-		a = -1
-		move = ' '
+		movelist = list()
+        a = -1
 		for i in ['w','a','s','d']:
-			b = a
-			a = max(a,cornerscore[i]*self.para["size"]*self.para["size"]+spacescore[i])
-			if b != a: move = i
+            b = cornerscore[i]*self.para["size"]*self.para["size"]+spacescore[i])
+			if b > a:
+                movelist = [i]
+                a = b
+            elif b==a:
+                movelist.append(i)
+        if len(movelist) > 1:
+            move = random.choice(movelist)
+        else:
+            move = movelist[0]
 	#variable control
 		#print cornerscore
 		#print spacescore
@@ -350,8 +359,8 @@ class Game_play(Game):
 		tempgame = list()
 		for i in range(0,self.para["size"]):
 			tempgame.append(self[i][:])
-			
-		return 0
+		move = self.solvermgr.machines[self.n_machine]["machine"].test(tempgame)	
+		return move
 		
 	#play only one game but collect all data
 	def oneplay(self,para_dict):
