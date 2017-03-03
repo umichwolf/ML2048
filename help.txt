@@ -11,8 +11,7 @@ play ### play the game many times ###
 m:playmethod
 f:outputfile
 
--m ### parameters of machine ###
-
+-m ### machine parameters ###
 n:name ### name of machine ###
 t:tool ### tool of the machine ####
 

@@ -1,4 +1,4 @@
-import Msolver
+from solver import Msolver
 import numpy as np
 
 # Read training data from output file
@@ -28,8 +28,8 @@ game_info = {"type":"2048",
              "moves":["w","a","s","d"]}
 machine_info = {"type":"SVM",
                 "gamma":0.001,
-                "no_features":500,
-                "alpha":10**(-7)}
+                "no_features":16,
+                "alpha":10**(-10)}
 
 mgr = Msolver.Solver()
 #mgr.load('SVM','train1')
@@ -38,6 +38,7 @@ data_list[data_list==0] = 1
 data_list = np.log(data_list)/np.log(2)
 mgr.new(game_info,machine_info,"train1")
 mgr.machines[0]["machine"].train(data_list,move_list)
+mgr.save(0)
 
 ### check classification accuracy of machine 
 #score = 0
