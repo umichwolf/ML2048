@@ -23,7 +23,7 @@ class SVM(SGDClassifier):
     def cleanup(self,X):
         X = np.array(X)
         X[X==0] = 1
-        X = np.log(X)/np.log2(X)
+        X = np.log2(X)
         return X
 
     def train(self,X,Y):
