@@ -1,4 +1,4 @@
 
-2048 -j playselect -p m:ml o:outputfinal.txt np:1 ns:10 -m t:SVM n:train1 
+2048 -j oneplay -p m:ml o:outputfinal.txt -m t:SVM n:better 
 
 

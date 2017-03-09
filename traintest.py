@@ -27,9 +27,9 @@ game_info = {"type":"2048",
              "size":4,
              "moves":["w","a","s","d"]}
 machine_info = {"type":"SVM",
-                "gamma":0.001,
-                "no_features":20,
-                "alpha":10**(-1)}
+                "gamma":0.002,
+                "no_features":1000,
+                "alpha":10**(-20)}
 
 mgr = Msolver.Solver()
 #mgr.load('SVM','train1')
