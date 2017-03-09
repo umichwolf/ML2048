@@ -31,3 +31,4 @@ mgr.show("l")
 mgr.save(0)
 mgr.load("SVM","test1")
 mgr.show()
+

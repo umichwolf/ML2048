@@ -19,8 +19,6 @@ def input():
         request = requestcheck()
         if request:
             return order
-        
-
 
 def input_try():
     order = raw_input()
@@ -51,7 +49,7 @@ def input_try():
         
         
     return order_organized
-    
+
 def input_readline(line):
     result_dict = {
         "time": time.asctime( time.localtime(time.time()) ),
@@ -60,24 +58,20 @@ def input_readline(line):
         "machine": None,
         "para": None
     }
-    
     order_dict = {
         "job": "-j",
         "machine": "-m",
         "para": "-p"
     }
-    
     try:
         cur_order = re.findall('^(\S+) ',line)
         result_dict["game"] = cur_order[0]
     except:
         pass
-    
     for key, value in order_dict.items():
         result_dict[key] = para_extract(order_dict,key,line)
-    
     return result_dict
-    
+
 def para_extract(order_dict,key,line):
     para = None
     if order_dict[key] in line:
@@ -90,7 +84,6 @@ def para_extract(order_dict,key,line):
         except:
             pass
     return para
-
 
 def requestcheck():
     print "(Y for yes, N for no, Q for quit)"

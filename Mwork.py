@@ -7,8 +7,6 @@ import Msupport
 import Moutput
 import game_2048
 
-
-
 def _2048_work(order,solvermgr):
     game = game_2048.Game_play(order,solvermgr)
     

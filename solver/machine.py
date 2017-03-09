@@ -2,6 +2,7 @@
 # to solve the games.
 from sklearn.kernel_approximation import RBFSampler
 from sklearn.linear_model import SGDClassifier
+import numpy as np
 
 class SVM(SGDClassifier):
     def __init__(self,classes,gamma=1,no_features=10,alpha=10**(-5)):
@@ -19,6 +20,11 @@ class SVM(SGDClassifier):
 # samples.
         self.rbf_features = RBFSampler(gamma=gamma,
                                        n_components=no_features)
+    def cleanup(self,X):
+        X = np.array(X)
+        X[X==0] = 1
+        X = np.log(X)/np.log2(X)
+        return X
 
     def train(self,X,Y):
         X_features = self.rbf_features.fit_transform(X)
