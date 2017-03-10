@@ -1,34 +1,24 @@
-import Msolver
+from solver import Msolver
 import numpy as np
+import Minput
+import random
 
-# Initialize parameters
-X = np.array([[0,1],[1,0],[1,1]])
-Y = ["a","b","c"]
+filename = "data_train.txt"
+data = Minput.read_training_data(filename)
+X = data["X"]
+Y = data["Y"]
+mgr = Msolver.Solver()
 game_info = {"type":"2048",
              "size":4,
-             "moves":["c","a","b"]}
+             "moves":["w","a","s","d"]}
 machine_info = {"type":"SVM",
-                "gamma":1,
-                "no_features":3}
-
-# Initialize Msolver manager
-mgr = Msolver.Solver()
-
-# Build a new machine
-mgr.new(game_info,machine_info,"test1")
-print mgr.machines[0]
-
-# Train and test the new machine
-# mgr.machines[0]["machine"].train(X,Y)
-# print mgr.machines[0]["machine"].classes_
-# ans = mgr.machines[0]["machine"].test([[1,2]])
-# print ans
-
-# Show the machines
-mgr.show("l")
-
-# Save and load the machine
-mgr.save(0)
-mgr.load("SVM","test1")
-mgr.show()
-
+                "gamma":0.002,
+                "no_features":100,
+                "alpha":10**(-20)}
+mgr.new(game_info,machine_info,"dbg1")
+Xlen = len(X)
+no_samples = int(0.1*Xlen)
+print Xlen
+samples = random.sample(xrange(Xlen),no_samples)
+Xsamples = [X[i] for i in samples]
+print np.linalg.norm(Xsamples)/np.sqrt(no_samples)

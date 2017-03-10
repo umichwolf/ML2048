@@ -97,6 +97,31 @@ def requestcheck():
     else:
         return requestcheck()
     
-        
-
+def read_training_data(filename):
+    try:
+        f = open(filename,"r")
+        dataset = list()
+        for line in f:
+            row = line.split()
+            if row != []:
+                dataset.append(row)
+    except Exception as ex:
+        template = "An exception of type {0} occured. Arguments:\n{1!r}"
+        message = template.format(type(ex).__name__, ex.args)
+        print message
+    finally:
+        f.close()
+    data_list = list()
+    move_list = list()
+    for idx in range(len(dataset)):
+        if len(dataset[idx])==17:
+            move = dataset[idx].pop(16)
+        else:
+            move = "f"
+        if move in ["w","a","s","d"]:
+            move_list.append(move)
+            data_list.append(map(int,dataset[idx]))
+    training_data = {"X":data_list,
+                     "Y":move_list}
+    return training_data
     
