@@ -48,14 +48,14 @@ class Solver:
             print "Machine index is out of range."
             return 0
         else:
-        item = self.machines[midx]
-        machine_type = item["machine_type"]
-        machine_name = item["name"]
-        pkl_filename = self.pwd + machine_type + "-" + machine_name + ".pkl"
-        pkl_file = open(pkl_filename,"wb+")
-        ans = pickle.dump(item,pkl_file)
-        pkl_file.close()
-        return ans
+            item = self.machines[midx]
+            machine_type = item["machine_type"]
+            machine_name = item["name"]
+            pkl_filename = self.pwd + machine_type + "-" + machine_name + ".pkl"
+            pkl_file = open(pkl_filename,"wb+")
+            ans = pickle.dump(item,pkl_file)
+            pkl_file.close()
+            return ans
 
 # Load a machine, and return its number.
     def load(self,machine_type,machine_name):
