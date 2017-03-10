@@ -59,7 +59,7 @@ class Solver:
         return len(self.machines)
 
 # Remove a machine from solver
-    def remove(self,index = len(self.machines)-1):
+    def remove(self,index = -1):
         if type(index) == float:
             print "Machine index must be a nonnegative integer."
             return 0
@@ -69,3 +69,9 @@ class Solver:
         else:
             del self.machines[index]
             return 1
+# Clean up the data before training a machine
+    def cleanup(self,X):
+        X = np.array(X)
+        X[X==0] = 1
+        X = np.log2(X)
+        return X

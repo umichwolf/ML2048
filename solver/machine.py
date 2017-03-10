@@ -20,17 +20,12 @@ class SVM(SGDClassifier):
 # samples.
         self.rbf_features = RBFSampler(gamma=gamma,
                                        n_components=no_features)
-    def cleanup(self,X):
-        X = np.array(X)
-        X[X==0] = 1
-        X = np.log2(X)
-        return X
 
     def train(self,X,Y):
         X_features = self.rbf_features.fit_transform(X)
         self.partial_fit(X_features,Y,self.classes)
         score = self.score(X_features,Y)
-        print score
+        return score
 
     def test(self,X):
         X_features = self.rbf_features.fit_transform(X)
