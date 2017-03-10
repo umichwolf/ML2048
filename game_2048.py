@@ -171,7 +171,6 @@ class Game(list):
                    temp.append(self[i][j])
             for j in range(0,self.para["size"]):
                    self[i][self.para["size"]-j-1] = temp[j]
-
                    
 class Game_play(Game):
     def __init__(self, order, solvermgr):
@@ -187,6 +186,7 @@ class Game_play(Game):
             }
         para = Msupport.parametrize(order["para"])
         machine = Msupport.parametrize(order["machine"])
+        self.mgr = solvermgr
         if (para)["method"] == 'ml':
             n_machine = solvermgr.load(machine["machinetype"],machine["machinename"])
         self.machine = solvermgr.machines[n_machine-1]["machine"]
@@ -362,6 +362,7 @@ class Game_play(Game):
         tempgame = list()
         for i in range(0,self.para["size"]):
             tempgame.append(self[i][:])
+        tempgame = self.mgr.cleanup(tempgame)
         movelist = self.machine.test(tempgame)    
         while True:
             move = Msupport.weighted_choice(movelist)
