@@ -1,6 +1,7 @@
 from solver import Msolver
 import numpy as np
 import Minput
+from sklearn.model_selection import train_test_split
 
 # Read training data from output file
 filename = "data_train.txt"
@@ -9,6 +10,8 @@ X = data["X"]
 Y = data["Y"]
 mgr = Msolver.Solver()
 X = mgr.cleanup(X)
+X_train,X_test,Y_train,Y_test = train_test_split(
+    X,Y,test_size=0.4,random_state=0)
 
 bestscore = 0
 for gamma in np.arange(-1.7,-1.4,0.05):
@@ -21,13 +24,15 @@ for gamma in np.arange(-1.7,-1.4,0.05):
                         "no_features":500,
                         "alpha":10**float(alpha)}
         mgr.new(game_info,machine_info,"better")
-        score = mgr.machines[0]["machine"].train(X,Y)
+        mgr.machines[0]["machine"].train(X_train,Y_train)
+        X_test = mgr.machines[0]["machine"].rbf_features.fit_transform(X_test)
+        score = mgr.machines[0]["machine"].score(X_test,Y_test)
         if score > bestscore:
             bestgamma = gamma
             bestalpha = alpha
             bestscore = score
         mgr.remove(0)
         print alpha,gamma
-print "bestgamma=",bestgamma,"\n"
-print "bestalpha=",bestalpha,"\n"
-print "bestscore=",bestscore,"\n"
+print "bestgamma=",bestgamma
+print "bestalpha=",bestalpha
+print "bestscore=",bestscore
