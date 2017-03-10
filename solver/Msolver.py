@@ -2,6 +2,7 @@
 # test and manage the machines for games.
 import machine
 import pickle
+import numpy as np
 
 class Solver:
     def __init__(self,pwd="./machines/"):
