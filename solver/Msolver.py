@@ -41,6 +41,13 @@ class Solver:
 # Save a machine. The names of machines within the same type
 # cannot duplicate.
     def save(self,midx):
+        if type(midx) != int:
+            print "Machine index must be a nonnegative integer."
+            return 0
+        elif midx >= len(self.machines):
+            print "Machine index is out of range."
+            return 0
+        else:
         item = self.machines[midx]
         machine_type = item["machine_type"]
         machine_name = item["name"]
@@ -61,7 +68,7 @@ class Solver:
 
 # Remove a machine from solver
     def remove(self,index = -1):
-        if type(index) == float:
+        if type(index) != int:
             print "Machine index must be a nonnegative integer."
             return 0
         elif index >= len(self.machines):
