@@ -10,7 +10,7 @@ class SVM(SGDClassifier):
         self.gamma = gamma
         self.no_features = no_features
         self.classes = classes
-        self.loss = "log"
+        self.loss = "modified_huber"
         self.alpha = alpha
 # Establish the random kernel when the machine is
 # built for the first time. Then it will be a constant
