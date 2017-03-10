@@ -58,5 +58,14 @@ class Solver:
         self.machines.append(item)
         return len(self.machines)
 
-## Remove a machine from solver
-#    def remove(self):
+# Remove a machine from solver
+    def remove(self,index = len(self.machines)-1):
+        if type(index) == float:
+            print "Machine index must be a nonnegative integer."
+            return 0
+        elif index >= len(self.machines):
+            print "Machine index is out of range."
+            return 0
+        else:
+            del self.machines[index]
+            return 1
