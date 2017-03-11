@@ -23,10 +23,23 @@ class Solver:
                     "gamma":machine_info["gamma"],
                     "no_features":machine_info["no_features"],
                     "alpha":machine_info["alpha"],
-                    "machine_type":machine_info["type"],
                     "machine":newm}
             self.machines.append(item)
-
+            return len(self.machines)-1
+        elif machine_info["type"] == "KSVM":
+            newm = machine.KSVM(machine_info["C"])
+            item = {"name":machine_name,
+                    "game_type":game_info["type"],
+                    "game_size":game_info["size"],
+                    "machine_type":machine_info["type"],
+                    "C":machine_info["C"],
+                    "machine":newm}
+            self.machines.append(item)
+            return len(self.machines)-1
+        else:
+            print "The machine type is not found."
+            return -1
+ 
 # Show the list of machine
     def show(self,l_s="s"):
         if len(self.machines)==0:
@@ -77,6 +90,7 @@ class Solver:
         else:
             del self.machines[index]
             return 1
+
 # Clean up the data before training a machine
     def cleanup(self,X):
         X = np.array(X)

@@ -1,5 +1,6 @@
 # This module defines the classes of machines that can be used
 # to solve the games.
+from sklearn import svm
 from sklearn.kernel_approximation import RBFSampler
 from sklearn.linear_model import SGDClassifier
 import numpy as np
@@ -34,3 +35,10 @@ class SVM(SGDClassifier):
         for idx in range(len(self.classes)):
             ans[self.classes_[idx]] = proba[0,idx]
         return ans
+
+class KSVM(svm.SVC):
+    def __init__(self,C):
+        svm.SVC.__init__(self,C=C)
+
+    def train(self,X,Y):
+        self.fit(X,Y)
