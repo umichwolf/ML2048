@@ -1,5 +1,6 @@
 # The solver of games is used to build, train,
 # test and manage the machines for games.
+from sklearn import preprocessing
 import machine
 import pickle
 import numpy as np
@@ -27,11 +28,13 @@ class Solver:
             self.machines.append(item)
             return len(self.machines)-1
         elif machine_info["type"] == "KSVM":
-            newm = machine.KSVM(machine_info["C"])
+            newm = machine.KSVM(C=machine_info["C"],
+                                gamma=machine_info["gamma"])
             item = {"name":machine_name,
                     "game_type":game_info["type"],
                     "game_size":game_info["size"],
                     "machine_type":machine_info["type"],
+                    "gamma":machine_info["gamma"],
                     "C":machine_info["C"],
                     "machine":newm}
             self.machines.append(item)
@@ -96,4 +99,5 @@ class Solver:
         X = np.array(X)
         X[X==0] = 1
         X = np.log2(X)
+#        X = preprocessing.scale(X)
         return X

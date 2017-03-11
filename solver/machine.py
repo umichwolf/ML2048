@@ -37,8 +37,8 @@ class SVM(SGDClassifier):
         return ans
 
 class KSVM(svm.SVC):
-    def __init__(self,C):
-        svm.SVC.__init__(self,C=C)
+    def __init__(self,C=1,gamma='auto',kernel='rbf'):
+        svm.SVC.__init__(self,C=C,gamma=gamma,kernel=kernel)
 
     def train(self,X,Y):
         self.fit(X,Y)
