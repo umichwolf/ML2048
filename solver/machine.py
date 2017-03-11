@@ -29,6 +29,7 @@ class SVM(SGDClassifier):
         return score
 
     def test(self,X):
+        X = X.reshape(1,-1)
         X_features = self.rbf_features.fit_transform(X)
         proba = self.predict_proba(X_features)
         ans = dict()
@@ -37,8 +38,17 @@ class SVM(SGDClassifier):
         return ans
 
 class KSVM(svm.SVC):
-    def __init__(self,C=1,gamma='auto',kernel='rbf'):
-        svm.SVC.__init__(self,C=C,gamma=gamma,kernel=kernel)
+    def __init__(self,classes,C=1,gamma='auto',kernel='rbf'):
+        svm.SVC.__init__(self,C=C,gamma=gamma,kernel=kernel,probability=True)
+        self.classes = classes
 
     def train(self,X,Y):
         self.fit(X,Y)
+
+    def test(self,X):
+        X = X.reshape(1,-1)
+        proba = self.predict_proba(X)
+        ans = dict()
+        for idx in range(len(self.classes)):
+            ans[self.classes_[idx]] = proba[0,idx]
+        return ans

@@ -361,7 +361,7 @@ class Game_play(Game):
     def _2048_mlsolver(self):   
         tempgame = list()
         for i in range(0,self.para["size"]):
-            tempgame.append(self[i][:])
+            tempgame.extend(self[i][:])
         tempgame = self.mgr.cleanup(tempgame)
         movelist = self.machine.test(tempgame)    
         while True:

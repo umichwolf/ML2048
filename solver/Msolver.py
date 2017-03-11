@@ -28,7 +28,8 @@ class Solver:
             self.machines.append(item)
             return len(self.machines)-1
         elif machine_info["type"] == "KSVM":
-            newm = machine.KSVM(C=machine_info["C"],
+            newm = machine.KSVM(classes=game_info["moves"],
+                                C=machine_info["C"],
                                 gamma=machine_info["gamma"])
             item = {"name":machine_name,
                     "game_type":game_info["type"],

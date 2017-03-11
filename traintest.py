@@ -19,8 +19,8 @@ machine_info = {"type":"KSVM",
                 "C":1,
                 "gamma":10**(-1.6)}
 mgr.new(game_info,machine_info,"better")
-mgr.machines[0]["machine"].train(X_train,Y_train)
+mgr.machines[0]["machine"].train(X,Y)
 print mgr.machines[0]["machine"].n_support_
-score = mgr.machines[0]["machine"].score(X_test,Y_test)
+score = mgr.machines[0]["machine"].score(X,Y)
 print score
 mgr.save(0)
