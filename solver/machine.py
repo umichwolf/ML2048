@@ -30,7 +30,7 @@ class SVM(SGDClassifier):
 
     def test(self,X):
         X = X.reshape(1,-1)
-        X_features = self.rbf_features.fit_transform(X)
+        X_features = self.rbf_features.transform(X)
         proba = self.predict_proba(X_features)
         ans = dict()
         for idx in range(len(self.classes)):

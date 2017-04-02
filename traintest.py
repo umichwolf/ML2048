@@ -23,4 +23,4 @@ mgr.machines[0]["machine"].train(X,Y)
 print mgr.machines[0]["machine"].n_support_
 score = mgr.machines[0]["machine"].score(X,Y)
 print score
-mgr.save(0)
+#mgr.save(0)
