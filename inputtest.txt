@@ -1,0 +1,4 @@
+
+2048 -j oneplay -p m:ml o:outputfinal.txt -m t:KSVM n:better 
+
+

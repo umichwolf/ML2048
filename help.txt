@@ -1,0 +1,36 @@
+Here is a list commands:
+%2048
+
+-j #### job type ####
+
+learn #### learn the data ####
+oneplay ### play the game once ###
+play ### play the game many times ###
+
+-parameter ### parameters ###
+m:playmethod
+f:outputfile
+
+-m ### machine parameters ###
+n:name ### name of machine ###
+t:tool ### tool of the machine ####
+
+
+
+
+-l ####parameters of learning ####
+ 
+b ### batch learn
+o ### online learn
+s:a,b ### online training itself a times, every data comes from 1 of the best b samples
+
+-i ### parameters of input ###
+
+f:filename ### input data from a file 
+m:variable ### input data from memory
+
+-o ### parameters of output ###
+
+f:filename ### output data to a file 
+m:variable ### output data to memory
+
