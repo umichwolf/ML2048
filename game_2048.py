@@ -3,7 +3,8 @@
 import copy
 import random
 import Msupport
-from solver import Msolver
+import tensorflow as tf
+import Msolver
 
 #Define Game Class
 class Game(list):
@@ -190,7 +191,11 @@ class Game_play(Game):
         self.mgr = solvermgr
         if (para)["method"] == 'ml':
             n_machine = solvermgr.load(machine["machinetype"],machine["machinename"])
-        self.machine = solvermgr.machines[n_machine-1]["machine"]
+            self.machine = solvermgr.machines[n_machine-1]["machine"]
+        if (para)["method"] == 'cnn':
+            print("cnn")
+
+
         parameter = list()
         Game.__init__(self,parameter)
         self.data = list()

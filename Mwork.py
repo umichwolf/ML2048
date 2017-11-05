@@ -2,7 +2,7 @@
 import sys
 import random
 import re
-from solver import Msolver
+import Msolver
 import Msupport
 import Moutput
 import game_2048

@@ -5,7 +5,7 @@ import Msupport
 import Minit
 import Minput
 import Mwork
-from solver import Msolver
+import Msolver
 
 Minit.machine_init()
 
