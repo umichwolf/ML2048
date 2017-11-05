@@ -4,6 +4,10 @@ from sklearn import svm
 from sklearn.kernel_approximation import RBFSampler
 from sklearn.linear_model import SGDClassifier
 import numpy as np
+import tensorflow as tf
+import sys
+sys.path.append('..')
+import Mcnn
 
 class SVM(SGDClassifier):
     def __init__(self,classes,gamma=1,no_features=10,alpha=10**(-5)):
@@ -52,3 +56,25 @@ class KSVM(svm.SVC):
         for idx in range(len(self.classes)):
             ans[self.classes_[idx]] = proba[0,idx]
         return ans
+
+class CNN:
+    def __init__(self):
+        self.flag = 1
+
+    def test(self,X):
+        # Create the Estimator
+        mnist_classifier = tf.estimator.Estimator(
+            model_fn=Mcnn.cnn_model_fn, model_dir="/tmp/2048_model")
+
+        predict_input_fn = tf.numpy_input_fn(
+            x={"x": X},
+            num_epochs=1,
+            shuffle=None,
+        )
+        proba = mnist_classifier.predict(
+            predict_input_fn
+        )
+
+
+        print(proba)
+        return proba

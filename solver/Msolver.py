@@ -41,28 +41,28 @@ class Solver:
             self.machines.append(item)
             return len(self.machines)-1
         else:
-            print "The machine type is not found."
+            print("The machine type is not found.")
             return -1
  
 # Show the list of machine
     def show(self,l_s="s"):
         if len(self.machines)==0:
-            print "No machines have been loaded or built yet!"
+            print("No machines have been loaded or built yet!")
         if l_s=="l":
             for idx in range(len(self.machines)):
-                print idx,"\n",self.machines[idx]
+                print(idx,"\n",self.machines[idx])
         else:
             for idx in range(len(self.machines)):
-                print idx," ",self.machines[idx]["name"]
+                print(idx," ",self.machines[idx]["name"])
 
 # Save a machine. The names of machines within the same type
 # cannot duplicate.
     def save(self,midx):
         if type(midx) != int:
-            print "Machine index must be a nonnegative integer."
+            print("Machine index must be a nonnegative integer.")
             return 0
         elif midx >= len(self.machines):
-            print "Machine index is out of range."
+            print("Machine index is out of range.")
             return 0
         else:
             item = self.machines[midx]
@@ -86,10 +86,10 @@ class Solver:
 # Remove a machine from solver
     def remove(self,index = -1):
         if type(index) != int:
-            print "Machine index must be a nonnegative integer."
+            print("Machine index must be a nonnegative integer.")
             return 0
         elif index >= len(self.machines):
-            print "Machine index is out of range."
+            print("Machine index is out of range.")
             return 0
         else:
             del self.machines[index]
