@@ -1,17 +1,4 @@
-#  Copyright 2016 The TensorFlow Authors. All Rights Reserved.
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-"""Convolutional Neural Network Estimator for MNIST, built with tf.layers."""
+# Convolutional Neural Network Estimator for 2048 solver, built with tf.layers.
 
 from __future__ import absolute_import
 from __future__ import division
@@ -21,7 +8,6 @@ import numpy as np
 import tensorflow as tf
 
 tf.logging.set_verbosity(tf.logging.INFO)
-
 
 def cnn_model_fn(features, labels, mode):
     """Model function for CNN."""
@@ -42,17 +28,17 @@ def cnn_model_fn(features, labels, mode):
         padding="same",
         activation=tf.nn.relu)
 
-# Pooling Layer #1
-# First max pooling layer with a 2x2 filter and stride of 2
-# Input Tensor Shape: [batch_size, 28, 28, 32]
-# Output Tensor Shape: [batch_size, 14, 14, 32]
-#  not pooling anymore pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2], strides=2)
+    # Pooling Layer #1
+    # First max pooling layer with a 2x2 filter and stride of 2
+    # Input Tensor Shape: [batch_size, 28, 28, 32]
+    # Output Tensor Shape: [batch_size, 14, 14, 32]
+    #  not pooling anymore pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2], strides=2)
 
-# Convolutional Layer #2
-# Computes 64 features using a 5x5 filter.
-# Padding is added to preserve width and height.
-# Input Tensor Shape: [batch_size, 14, 14, 32]
-# Output Tensor Shape: [batch_size, 14, 14, 64]
+    # Convolutional Layer #2
+    # Computes 64 features using a 5x5 filter.
+    # Padding is added to preserve width and height.
+    # Input Tensor Shape: [batch_size, 14, 14, 32]
+    # Output Tensor Shape: [batch_size, 14, 14, 64]
     conv2 = tf.layers.conv2d(
     inputs=conv1,
         filters=20,
@@ -60,30 +46,30 @@ def cnn_model_fn(features, labels, mode):
         padding="same",
         activation=tf.nn.relu)
 
-# Pooling Layer #2
-# Second max pooling layer with a 2x2 filter and stride of 2
-# Input Tensor Shape: [batch_size, 14, 14, 64]
-# Output Tensor Shape: [batch_size, 7, 7, 64]
-#not pooling anymore pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], strides=2)
+    # Pooling Layer #2
+    # Second max pooling layer with a 2x2 filter and stride of 2
+    # Input Tensor Shape: [batch_size, 14, 14, 64]
+    # Output Tensor Shape: [batch_size, 7, 7, 64]
+    #not pooling anymore pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], strides=2)
 
-# Flatten tensor into a batch of vectors
-# Input Tensor Shape: [batch_size, 7, 7, 64]
-# Output Tensor Shape: [batch_size, 7 * 7 * 64]
+    # Flatten tensor into a batch of vectors
+    # Input Tensor Shape: [batch_size, 7, 7, 64]
+    # Output Tensor Shape: [batch_size, 7 * 7 * 64]
     conv2_flat = tf.reshape(conv2, [-1, 4 * 4 * 20])
 
-# Dense Layer
-#  Densely connected layer with 1024 neurons
-# Input Tensor Shape: [batch_size, 7 * 7 * 64]
-#  Output Tensor Shape: [batch_size, 1024]
+    # Dense Layer
+    #  Densely connected layer with 1024 neurons
+    # Input Tensor Shape: [batch_size, 7 * 7 * 64]
+    #  Output Tensor Shape: [batch_size, 1024]
     dense = tf.layers.dense(inputs=conv2_flat, units=1024, activation=tf.nn.relu)
 
-  # Add dropout operation; 0.6 probability that element will be kept
+    # Add dropout operation; 0.6 probability that element will be kept
     dropout = tf.layers.dropout(
         inputs=dense, rate=0.9, training=mode == tf.estimator.ModeKeys.TRAIN)
 
-  # Logits layer
-  # Input Tensor Shape: [batch_size, 1024]
-  # Output Tensor Shape: [batch_size, 10]
+    # Logits layer
+    # Input Tensor Shape: [batch_size, 1024]
+    # Output Tensor Shape: [batch_size, 10]
     logits = tf.layers.dense(inputs=dropout, units=4)
 
     predictions = {
@@ -109,13 +95,65 @@ def cnn_model_fn(features, labels, mode):
             global_step=tf.train.get_global_step())
         return tf.estimator.EstimatorSpec(mode=mode, loss=loss, train_op=train_op)
 
-# Add evaluation metrics (for EVAL mode)
+    # Add evaluation metrics (for EVAL mode)
     eval_metric_ops = {
         "accuracy": tf.metrics.accuracy(
             labels=labels, predictions=predictions["classes"])}
     return tf.estimator.EstimatorSpec(
         mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
 
+def shallow_nn():
+    input_layer = tf.reshape(features["x"], [-1, 4, 4, 1])
+
+    # full connected layer
+    dense = tf.layers.dense(
+        inputs=input_layer,
+        units=10,
+        activation=tf.nn.relu
+    )
+    dropout = tf.layers.dropout(
+        inputs=dense,
+        rate=0,
+        training=(mode == tf.estimator.ModeKeys.TRAIN)
+    )
+
+    # logits layer
+    logits = tf.layers.dense(
+        inputs=dropout,
+        units=4
+    )
+
+    predictions = {
+        "classes": tf.argmax(input=logits, axis=1),
+        "probabilities": tf.nn.softmax(logits,
+            name="softmax_tensor")
+    }
+    if mode == tf.estimator.ModeKeys.PREDICT:
+        return tf.estimator.EstimatorSpec(mode=mode,
+                    predictions=predictions)
+
+    # calculate loss for both train and eval modes
+    onehot_labels = tf.one_hot(indices=tf.cast(labels, tf.int32),
+                               depth=4)
+    loss = tf.losses.softmax_cross_entropy(
+        onehot_labels=onehot_labels, logits=logits
+    )
+
+    # training op
+    if mode == tf.estimator.ModeKeys.TRAIN:
+        optimizer = tf.train.AdamOptimizer(learning_rate=0.001)
+        train_op = optimizer.minimize(
+            loss=loss,
+            global_step=tf.train.get_global_step())
+        return tf.estimator.EstimatorSpec(mode=mode,
+            loss=loss, train_op=train_op)
+
+    # add evaluation metrics
+    eval_metric_ops = {
+        "accuracy": tf.metrics.accuracy(
+            labels=labels, predictions=predictions["classes"])}
+    return tf.estimator.EstimatorSpec(
+        mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
 
 def main(unused_argv):
     cut_label = 7000
