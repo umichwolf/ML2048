@@ -40,7 +40,7 @@ def cnn_model_fn(features, labels, mode):
     # Input Tensor Shape: [batch_size, 14, 14, 32]
     # Output Tensor Shape: [batch_size, 14, 14, 64]
     conv2 = tf.layers.conv2d(
-    inputs=conv1,
+        inputs=conv1,
         filters=20,
         kernel_size=[2,2],
         padding="same",
@@ -102,24 +102,25 @@ def cnn_model_fn(features, labels, mode):
     return tf.estimator.EstimatorSpec(
         mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
 
-def shallow_nn():
-    input_layer = tf.reshape(features["x"], [-1, 4, 4, 1])
+def shallow_nn(features, labels, mode):
+    # input_layer = tf.reshape(features["x"], [-1, 4, 4, 1])
 
     # full connected layer
     dense = tf.layers.dense(
-        inputs=input_layer,
-        units=10,
+        inputs=features["x"],
+        units=100,
         activation=tf.nn.relu
     )
-    dropout = tf.layers.dropout(
-        inputs=dense,
-        rate=0,
-        training=(mode == tf.estimator.ModeKeys.TRAIN)
-    )
+    # dropout = tf.layers.dropout(
+    #     inputs=dense,
+    #     rate=0,
+    #     training=(mode == tf.estimator.ModeKeys.TRAIN)
+    # )
 
     # logits layer
     logits = tf.layers.dense(
-        inputs=dropout,
+    #    inputs=dropout,
+        inputs=dense,
         units=4
     )
 
@@ -158,7 +159,7 @@ def shallow_nn():
 def main(unused_argv):
     cut_label = 7000
     # Load training and eval data
-    task = input()
+    task = input('input mode: ')
     input_fo = open("output.txt", 'r')
 
     data = []
@@ -180,14 +181,14 @@ def main(unused_argv):
             elif temp[16] == 's':
                 temp_label = 3
             label.append(temp_label)
-    train_data = np.asarray(data[:cut_label])
-    train_labels = np.asarray(label[:cut_label])
-    eval_data = np.asarray(data[cut_label:])
-    eval_labels = np.asarray(label[cut_label:])
+    train_data = np.array(data[:cut_label])
+    train_labels = np.array(label[:cut_label])
+    eval_data = np.array(data[cut_label:])
+    eval_labels = np.array(label[cut_label:])
 
       # Create the Estimator
     mnist_classifier = tf.estimator.Estimator(
-        model_fn=shallow_fn, model_dir="machines/shallow_nn")
+        model_fn=shallow_nn, model_dir="machines/shallow_nn")
 
         # Set up logging for predictions
         # Log the values in the "Softmax" tensor with label "probabilities"
@@ -205,7 +206,7 @@ def main(unused_argv):
             shuffle=True)
         mnist_classifier.train(
             input_fn=train_input_fn,
-            steps=5000,
+            steps=10000,
             hooks=[logging_hook])
 
       # Evaluate the model and print results
