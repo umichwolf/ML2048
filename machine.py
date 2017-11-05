@@ -5,8 +5,6 @@ from sklearn.kernel_approximation import RBFSampler
 from sklearn.linear_model import SGDClassifier
 import numpy as np
 import tensorflow as tf
-import sys
-sys.path.append('..')
 import Mcnn
 
 class SVM(SGDClassifier):
