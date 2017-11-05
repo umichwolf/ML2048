@@ -7,21 +7,21 @@ import re
 
 def input():
     while 1:
-        print "Please give me your new order!"
+        print("Please give me your new order!")
         order = input_try()
         if order == 0:
             continue
-        print "Here is the order you gave me:"
-        print "Number of orders: ", order[0]
+        print("Here is the order you gave me:")
+        print("Number of orders: ", order[0])
         for i in range(1,order[0]+1):
             Msupport.dictprint(order[i])
-        print "Are these orders correct?"
+        print("Are these orders correct?")
         request = requestcheck()
         if request:
             return order
 
 def input_try():
-    order = raw_input()
+    order = input()
     
     order_organized = list()
     order_organized.append(0)
@@ -31,7 +31,7 @@ def input_try():
             input_filename = re.findall('f:(\S+)',order)
             #print input_filename
             input_fo = open(input_filename[0],'r')
-            print input_filename[0], " successfully loaded."
+            print(input_filename[0], " successfully loaded.")
             for line in input_fo.readlines():
                 if line.startswith('#') or not line.split():
                     continue
@@ -40,7 +40,7 @@ def input_try():
                     order_organized[0] = order_organized[0] + 1
             #input_file = input_fo.read()
         except:
-            print "Failed read orders from ", input_filename 
+            print("Failed read orders from ", input_filename)
             return 0
             
     else:
@@ -86,8 +86,8 @@ def para_extract(order_dict,key,line):
     return para
 
 def requestcheck():
-    print "(Y for yes, N for no, Q for quit)"
-    order = raw_input()
+    print("(Y for yes, N for no, Q for quit)")
+    order = input()
     if order == "Q":
         sys.exit(0)
     elif order == "Y":
@@ -108,7 +108,7 @@ def read_training_data(filename):
     except Exception as ex:
         template = "An exception of type {0} occured. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
-        print message
+        print(message)
     finally:
         f.close()
     data_list = list()

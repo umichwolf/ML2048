@@ -20,7 +20,7 @@ def _2048_work(order,solvermgr):
         "outputfile" : None
         }
         
-    print Msupport.parametrize(order["para"])
+    print(Msupport.parametrize(order["para"]))
     
     (job_dict[(order["job"])[1]])(Msupport.parametrize(order["para"]))
     return 0
@@ -30,14 +30,14 @@ def work(order,solvermgr):
         "2048": _2048_work
     }
     for i in range(1,order[0]+1):
-        print "Start processing order ",i
+        print("Start processing order ",i)
         #try:
         (game_dict[(order[i])["game"]])(order[i],solvermgr)
-        print "Order process complete."
+        print("Order process complete.")
         #except:
         #    print "Failed to process the following order:"
         #    Msupport.dictprint(order[i])
     
-    print "Job done!"
+    print("Job done!")
     return 0
     

@@ -18,10 +18,10 @@ def gamebetter(list1,list2):
 
 #print out an order 
 def dictprint(order):
-    print ""
+    print("")
     for key, value in order.items():
         if value != None:
-            print key, ": ", value
+            print(key, ": ", value)
             
 #get parameters from a list         
 def parametrize(list):
@@ -57,7 +57,7 @@ def parametrize(list):
 #get parameters from an order   
 def get_para(label,list):
     for i in range(1,len(list)):
-        print label,list[i]
+        print(label,list[i])
         if re.findall(label+'(.*?)(?: |$)',list[i]) != []:
             return re.findall(label+'(.*?)(?: |$)',list[i])
         

@@ -93,12 +93,12 @@ class Game(list):
     def printout(self):
         l = len(str((self.find_max())['value']))
         for i in range(0,self.para["size"]):
-            print '|',
+            print('|',end="")
             for j in range(0,self.para["size"]):
                 fill = l - len(str(self[i][j]))
                 space = ' '* fill
-                print space + str(self[i][j]) + '|',
-            print '\n'
+                print(space + str(self[i][j]) + '|',end="")
+            print('\n')
 #Basic operations          
     def move_up(self):
         for j in range(0,self.para["size"]):
@@ -182,7 +182,8 @@ class Game_play(Game):
             }
         self.method_dict = {
             "naive": self._2048_naivesolver,
-            "ml": self._2048_mlsolver
+            "ml": self._2048_mlsolver,
+            "cnn":self._2048_cnnsolver
             }
         para = Msupport.parametrize(order["para"])
         machine = Msupport.parametrize(order["machine"])
@@ -212,11 +213,12 @@ class Game_play(Game):
             for onegame in self.data:
                 for onestep in onegame:
                     for i in onestep:
-                        print >> fo, i,' ',
-                    print >> fo, '\n'
+                        s = str( i,' ')
+                        fo.write(s)
+                    fo.write('\n')
             fo.close()
         except:
-            print "Output to ",filename," failed."
+            print("Output to ",filename," failed.")
 
     def finaldata_foutput(self,filename):
         try:
@@ -224,11 +226,12 @@ class Game_play(Game):
             #print self.data
             for onegame in self.finaldata:
                 for i in onegame:
-                    print >> fo, i,' ',
-                print >> fo, '\n'
+                    s = str(i,' ')
+                    fo.write(s)
+                fo.write('\n')
             fo.close()
         except:
-            print "Output to ",filename," failed."
+            print("Output to ",filename," failed.")
 
             
     #Find greatest corner
@@ -370,7 +373,20 @@ class Game_play(Game):
                 break
             movelist.pop(move)
         return move
-        
+
+    def _2048_cnnsolver(self):
+        tempgame = list()
+        for i in range(0,self.para["size"]):
+            tempgame.extend(self[i][:])
+        tempgame = self.mgr.cleanup(tempgame)
+        movelist = self.machine.test(tempgame)
+        while True:
+            move = Msupport.weighted_choice(movelist)
+            if self.validate_move(move):
+                break
+            movelist.pop(move)
+        return move
+
     #play only one game but collect all data
     def oneplay(self,para_dict):
         #print "get here oneplay"
@@ -381,7 +397,7 @@ class Game_play(Game):
         try:
             self.data_foutput(para_dict["outputfile"])
         except:
-            print "Output to ",para_dict["data_foutputfile"]," failed."
+            print("Output to ",para_dict["data_foutputfile"]," failed.")
     
     #play multiple games but only collect the final step data
     def play(self,para_dict):
@@ -391,7 +407,7 @@ class Game_play(Game):
         try:
             self.finaldata_foutput(para_dict["outputfile"])
         except:
-            print "Output to ",para_dict["outputfile"]," failed."
+            print("Output to ",para_dict["outputfile"]," failed.")
 
     #return a best game data among n many of them
     def selectone(self,para_dict):
@@ -413,7 +429,7 @@ class Game_play(Game):
             self.finaldata_foutput(para_dict["outputfile"])
             self.data_foutput("output.txt")
         except:
-            print "Output to ",para_dict["outputfile"]," failed."   
+            print("Output to ",para_dict["outputfile"]," failed.")
 
     def validate_move(self,move):
         tempgame = list()
@@ -428,7 +444,7 @@ class Game_play(Game):
         elif move == 'w':
             self.move_up()    
         else:
-            print "illegal input!"
+            print("illegal input!")
         if tempgame[:] != self[:]:
             for i in range(0,self.para["size"]):
                 for j in range(0,self.para["size"]):

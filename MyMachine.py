@@ -15,11 +15,11 @@ while request:
     order = Minput.input()
     solvermgr = Msolver.Solver()
     Mwork.work(order,solvermgr)
-    print "Do you have another request?"
+    print("Do you have another request?")
     request = Minput.requestcheck()
     
     
     
-print "Thank you! Bye-Bye!"
+print("Thank you! Bye-Bye!")
 
 #Moutput.output()
