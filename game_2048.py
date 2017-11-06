@@ -15,16 +15,16 @@ class Game(list):
             "size": 4,
             "inc": 1,
             "ratio": [0.5,0.5],
-            "choice": random.choice             
+            "choice": random.choice
         }
-                
+
         self.zero_entry = list()
         for i in range(0,self.para["size"]):
             row = list()
             for j in range(0,self.para["size"]):
                 row.append(0)
             self.append(row)
-        
+
 #Update zero entries list
     def update_zero_entry(self):
         self.zero_entry = list()
@@ -39,7 +39,7 @@ class Game(list):
         for i in range(0,self.para["size"]):
             for j in range(0,self.para["size"]):
                 self[i][j] = 0
-                
+
 
 #Tell a game end or not
     def gameend(self):
@@ -63,8 +63,8 @@ class Game(list):
                         break
         return tag
 
-                    
-#Generate next number               
+
+#Generate next number
     def next(self):
         self.update_zero_entry()
         #print self.zero_entry
@@ -100,7 +100,7 @@ class Game(list):
                 space = ' '* fill
                 print(space + str(self[i][j]) + '|',end="")
             print('\n')
-#Basic operations          
+#Basic operations
     def move_up(self):
         for j in range(0,self.para["size"]):
             temp = list()
@@ -120,8 +120,8 @@ class Game(list):
             for i in range(0,self.para["size"]):
                 if i < len(temp1):
                     self[i][j] = temp1[i]
-                else: self[i][j] = 0    
-                            
+                else: self[i][j] = 0
+
     def move_down(self):
         for j in range(0,self.para["size"]):
             temp = list()
@@ -136,7 +136,7 @@ class Game(list):
                    temp.append(self[i][j])
             for i in range(0,self.para["size"]):
                    self[self.para["size"]-i-1][j] = temp[i]
-        
+
     def move_left(self):
         for i in range(0,self.para["size"]):
             temp = list()
@@ -157,7 +157,7 @@ class Game(list):
                 if j < len(temp1):
                     self[i][j] = temp1[j]
                 else: self[i][j] = 0
-                
+
     def move_right(self):
         for i in range(0,self.para["size"]):
             temp = list()
@@ -172,7 +172,7 @@ class Game(list):
                    temp.append(self[i][j])
             for j in range(0,self.para["size"]):
                    self[i][self.para["size"]-j-1] = temp[j]
-                   
+
 class Game_play(Game):
     def __init__(self, order, solvermgr):
         self.move_dict={
@@ -200,7 +200,7 @@ class Game_play(Game):
         Game.__init__(self,parameter)
         self.data = list()
         self.finaldata = list()
-        
+
     #countempty elements
     def countempty(self):
         a = 0
@@ -209,8 +209,8 @@ class Game_play(Game):
                 if self[i][j] == 0:
                     a = a + 1
         return a
-    
-    
+
+
     def data_foutput(self,filename):
         try:
             fo = open(filename,'w')
@@ -238,7 +238,7 @@ class Game_play(Game):
         except:
             print("Output to ",filename," failed.")
 
-            
+
     #Find greatest corner
     def greatestcorner(self):
         a = [-1,-1]
@@ -259,9 +259,9 @@ class Game_play(Game):
     def _2048_naivesolver(self):
         cornerscore = {'w':0,'a':0,'s':0,'d':0}
         spacescore = {'w':0,'a':0,'s':0,'d':0}
-        
+
         tempgame = list()
-        
+
         #print "got herer!!!!!!!!!!!!!!"
         for i in range(0,self.para["size"]):
             tempgame.append(self[i][:])
@@ -275,7 +275,7 @@ class Game_play(Game):
         for i in range(0,self.para["size"]):
             for j in range(0,self.para["size"]):
                  self[i][j] = tempgame[i][j]
-        
+
         self.move_left()
         if tempgame[:] != self[:]:
             if self.greatestcorner()[1] != -1: cornerscore['a'] = 1
@@ -285,7 +285,7 @@ class Game_play(Game):
             for j in range(0,self.para["size"]):
                  self[i][j] = tempgame[i][j]
 
-        
+
         self.move_down()
         if tempgame[:] != self[:]:
             if self.greatestcorner()[1] != -1: cornerscore['s'] = 1
@@ -295,7 +295,7 @@ class Game_play(Game):
             for j in range(0,self.para["size"]):
                  self[i][j] = tempgame[i][j]
 
-        
+
         self.move_right()
         if tempgame[:] != self[:]:
             if self.greatestcorner()[1] != -1: cornerscore['d'] = 1
@@ -307,7 +307,7 @@ class Game_play(Game):
         #print tempgame
         #print "= = = = ="
         #self.printout()
-                
+
         movelist = list()
         a = -1
         for i in ['w','a','s','d']:
@@ -327,7 +327,7 @@ class Game_play(Game):
         return move
 
     #########plaey a whole game and record the process ######
-            
+
     def gameplay(self,choicefunc):
         #print "here i am "
         onegame = list()
@@ -352,26 +352,26 @@ class Game_play(Game):
             elif move == 'd':
                 self.move_right()
             else: self.move_up()
-                
+
             self.next()
             tag = self.gameend()
-            
+
         self.printout()
-        
+
         onestep = self[0][:]
         for i in range(1,self.para["size"]):
             onestep = onestep + self[i][:]
         #onestep.append(None)
         onegame.append(onestep)
         return onegame,onestep
-        
 
-    def _2048_mlsolver(self):   
+
+    def _2048_mlsolver(self):
         tempgame = list()
         for i in range(0,self.para["size"]):
             tempgame.extend(self[i][:])
         tempgame = self.mgr.cleanup(tempgame)
-        movelist = self.machine.test(tempgame)    
+        movelist = self.machine.test(tempgame)
         while True:
             move = Msupport.weighted_choice(movelist)
             if self.validate_move(move):
@@ -403,12 +403,12 @@ class Game_play(Game):
             self.data_foutput(para_dict["outputfile"])
         except:
             print("Output to ",para_dict["data_foutputfile"]," failed.")
-    
+
     #play multiple games but only collect the final step data
     def play(self,para_dict):
         for i in range(int(para_dict["numofplay"])):
             onegame, gamefinal = self.gameplay(self.method_dict[para_dict["method"]])
-            self.finaldata.append(gamefinal)        
+            self.finaldata.append(gamefinal)
         try:
             self.finaldata_foutput(para_dict["outputfile"])
         except:
@@ -424,12 +424,12 @@ class Game_play(Game):
                 gameselected = curgame
                 finalselected = curfinal
         return gameselected, finalselected
-                
+
     def playselect(self,para_dict):
         for i in range(int(para_dict["numofplay"])):
             onegame, gamefinal = self.selectone(para_dict)
             self.data.append(onegame)
-            self.finaldata.append(gamefinal)        
+            self.finaldata.append(gamefinal)
         try:
             self.finaldata_foutput(para_dict["outputfile"])
             self.data_foutput("output.txt")
@@ -447,7 +447,7 @@ class Game_play(Game):
         elif move == 'd':
             self.move_right()
         elif move == 'w':
-            self.move_up()    
+            self.move_up()
         else:
             print("illegal input!")
         if tempgame[:] != self[:]:
@@ -456,12 +456,10 @@ class Game_play(Game):
                      self[i][j] = tempgame[i][j]
             return True
         else: return False
-    
+
 #The following is the main program.
 
 if __name__ == '__main__':
     game_play = Game_play(1)
     #game_play.naiveplay()
     #game_play.data_foutput("output.txt")
-    
-    
