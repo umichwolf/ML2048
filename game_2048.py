@@ -6,48 +6,47 @@ import Msupport
 import tensorflow as tf
 import Msolver
 
-#Define Game Class
-class Game(list):
+#define the board
+class Board(list):
 #Initialization
     def __init__(self, parameter):
-        list.__init__(self)
-        self.para = {
-            "size": 4,
-            "inc": 1,
-            "ratio": [0.5,0.5],
-            "choice": random.choice
-        }
+        super().__init__(self)
+        self._para = parameter # for example {"size": 4, "odd_2": 0.5}
+        self._zero_entries_list = list()
+        self.new_board()
 
-        self.zero_entry = list()
-        for i in range(0,self.para["size"]):
+    @property
+    def para(self):
+        return self._para
+    @property
+    def zero_entries_list(self):
+        return self._zero_entries_list
+# return a clean board
+    def new_board(self):
+        for i in range(0,self._para["size"]):
             row = list()
-            for j in range(0,self.para["size"]):
+            for j in range(0,self._para["size"]):
                 row.append(0)
             self.append(row)
+        self.next()
+        self.next()
 
-#Update zero entries list
-    def update_zero_entry(self):
-        self.zero_entry = list()
-        for i in range(0,self.para["size"]):
-            for j in range(0,self.para["size"]):
+# update zero entries list
+    def _update_zero_entries_list(self):
+        self._zero_entries_list = list()
+        for i in range(0,self._para["size"]):
+            for j in range(0,self._para["size"]):
                 if self[i][j] == 0:
                     row = [i,j]
-                    self.zero_entry.append(row)
+                    self._zero_entries_list.append(row)
 
-#Update all entries to be zero
-    def allzero(self):
-        for i in range(0,self.para["size"]):
-            for j in range(0,self.para["size"]):
-                self[i][j] = 0
-
-
-#Tell a game end or not
+# check the game ends or not
     def gameend(self):
         tag = 0
-        if self.zero_entry == []:
+        if self._zero_entries_list == []:
             tag = 1
-            for j in range(0,self.para["size"]):
-                for i in range(0,self.para["size"]-1):
+            for j in range(0,self._para["size"]):
+                for i in range(0,self._para["size"]-1):
                     if self[i][j] == self[i+1][j]:
                         tag = 0
                         break
@@ -63,24 +62,18 @@ class Game(list):
                         break
         return tag
 
-
-#Generate next number
+# generate next number
     def next(self):
-        self.update_zero_entry()
-        #print self.zero_entry
-        temp = (self.para["choice"])(self.zero_entry)
+        self._update_zero_entries_list()
+        temp = random.choice(self.zero_entry)
         rand = random.uniform(0,1)
-        #print "rand: ",rand
-        i = 0
-        while i <= len(self.para["ratio"]):
-            if rand <= (self.para["ratio"])[i]:
-                self[temp[0]][temp[1]] = 2**(i+1)
-                #print self[temp[0]][temp[1]]
-                break
-            i = i + 1
-            rand = rand - (self.para["ratio"])[i]
-        self.update_zero_entry()
-#Find the max entry
+        if rand <= self._para["odd_2"]:
+            self[temp[0]][temp[1]] = 2
+        else:
+            self[temp[0]][temp[1]] = 4
+        self._update_zero_entries_list()
+
+# find the max entry
     def find_max(self):
         max_entry = {'row':-1,'col':-1,'value':-1}
         for i in range(0,self.para["size"]):
@@ -90,21 +83,23 @@ class Game(list):
                     max_entry['col'] = j
                     max_entry['value'] = self[i][j]
         return max_entry
-#Print the game
-    def printout(self):
+
+# print the game board
+    def print_board(self):
         l = len(str((self.find_max())['value']))
-        for i in range(0,self.para["size"]):
+        for i in range(0,self._para["size"]):
             print('|',end="")
-            for j in range(0,self.para["size"]):
+            for j in range(0,self._para["size"]):
                 fill = l - len(str(self[i][j]))
                 space = ' '* fill
                 print(space + str(self[i][j]) + '|',end="")
             print('\n')
-#Basic operations
-    def move_up(self):
-        for j in range(0,self.para["size"]):
+
+# basic operations
+    def _move_up(self):
+        for j in range(0,self._para["size"]):
             temp = list()
-            for i in range(0,self.para["size"]):
+            for i in range(0,self._para["size"]):
                 if self[i][j] != 0:
                     temp.append(self[i][j])
             i = 0
@@ -117,30 +112,30 @@ class Game(list):
             for i in range(0,len(temp)):
                 if temp[i] != 0:
                     temp1.append(temp[i])
-            for i in range(0,self.para["size"]):
+            for i in range(0,self._para["size"]):
                 if i < len(temp1):
                     self[i][j] = temp1[i]
                 else: self[i][j] = 0
 
-    def move_down(self):
-        for j in range(0,self.para["size"]):
+    def _move_down(self):
+        for j in range(0,self._para["size"]):
             temp = list()
-            for i in range(0,self.para["size"]):
+            for i in range(0,self._para["size"]):
                    temp.append(self[i][j])
-            for i in range(0,self.para["size"]):
-                   self[self.para["size"]-i-1][j] = temp[i]
-        self.move_up()
-        for j in range(0,self.para["size"]):
+            for i in range(0,self._para["size"]):
+                   self[self._para["size"]-i-1][j] = temp[i]
+        self._move_up()
+        for j in range(0,self._para["size"]):
             temp = list()
-            for i in range(0,self.para["size"]):
+            for i in range(0,self._para["size"]):
                    temp.append(self[i][j])
-            for i in range(0,self.para["size"]):
-                   self[self.para["size"]-i-1][j] = temp[i]
+            for i in range(0,self._para["size"]):
+                   self[self._para["size"]-i-1][j] = temp[i]
 
-    def move_left(self):
-        for i in range(0,self.para["size"]):
+    def _move_left(self):
+        for i in range(0,self._para["size"]):
             temp = list()
-            for j in range(0,self.para["size"]):
+            for j in range(0,self._para["size"]):
                 if self[i][j] != 0:
                     temp.append(self[i][j])
             j = 0
@@ -153,27 +148,36 @@ class Game(list):
             for j in range(0,len(temp)):
                 if temp[j] != 0:
                     temp1.append(temp[j])
-            for j in range(0,self.para["size"]):
+            for j in range(0,self._para["size"]):
                 if j < len(temp1):
                     self[i][j] = temp1[j]
                 else: self[i][j] = 0
 
-    def move_right(self):
-        for i in range(0,self.para["size"]):
+    def _move_right(self):
+        for i in range(0,self._para["size"]):
             temp = list()
-            for j in range(0,self.para["size"]):
+            for j in range(0,self._para["size"]):
                    temp.append(self[i][j])
-            for j in range(0,self.para["size"]):
-                   self[i][self.para["size"]-j-1] = temp[j]
-        self.move_left()
-        for i in range(0,self.para["size"]):
+            for j in range(0,self._para["size"]):
+                   self[i][self._para["size"]-j-1] = temp[j]
+        self._move_left()
+        for i in range(0,self._para["size"]):
             temp = list()
-            for j in range(0,self.para["size"]):
+            for j in range(0,self._para["size"]):
                    temp.append(self[i][j])
-            for j in range(0,self.para["size"]):
-                   self[i][self.para["size"]-j-1] = temp[j]
+            for j in range(0,self._para["size"]):
+                   self[i][self._para["size"]-j-1] = temp[j]
+    def move(self, action):
+        if action == 'w':
+            self._move_up()
+        if action == 's':
+            self._move_down()
+        if action == 'a':
+            self._move_left()
+        if action == 'd':
+            self._move_right()
 
-class Game_play(Game):
+class Game:
     def __init__(self, order, solvermgr):
         self.move_dict={
             'w':1,
@@ -202,13 +206,13 @@ class Game_play(Game):
         self.finaldata = list()
 
     #countempty elements
-    def countempty(self):
-        a = 0
-        for i in range(0,self.para["size"]):
-            for j in range(0,self.para["size"]):
-                if self[i][j] == 0:
-                    a = a + 1
-        return a
+    # def countempty(self):
+    #     a = 0
+    #     for i in range(0,self.para["size"]):
+    #         for j in range(0,self.para["size"]):
+    #             if self[i][j] == 0:
+    #                 a = a + 1
+    #     return a
 
 
     def data_foutput(self,filename):
@@ -238,110 +242,109 @@ class Game_play(Game):
         except:
             print("Output to ",filename," failed.")
 
-
-    #Find greatest corner
-    def greatestcorner(self):
-        a = [-1,-1]
-        if self[0][0] == self.find_max()['value']:
-            a[0] = 0
-            a[1] = 0
-        elif self[0][self.para["size"]-1] == self.find_max()['value']:
-            a[0] = 0
-            a[1] = self.para["size"] - 1
-        elif self[self.para["size"]-1][0] == self.find_max()['value']:
-            a[0] = self.para["size"] - 1
-            a[1] = 0
-        elif self[self.para["size"]-1][self.para["size"]-1] == self.find_max()['value']:
-            a[0] = self.para["size"] - 1
-            a[1] = self.para["size"] - 1
-        return a
-    #Check possiblity of moving greatest entry to the corner
-    def _2048_naivesolver(self):
-        cornerscore = {'w':0,'a':0,'s':0,'d':0}
-        spacescore = {'w':0,'a':0,'s':0,'d':0}
-
-        tempgame = list()
-
-        #print "got herer!!!!!!!!!!!!!!"
-        for i in range(0,self.para["size"]):
-            tempgame.append(self[i][:])
-        #print tempgame
-        self.move_up()
-        #print "get here naivesolver!!!1"
-        if tempgame[:] != self[:]:
-            if self.greatestcorner()[1] != -1: cornerscore['w'] = 1
-            spacescore['w'] = self.countempty()
-        else: spacescore['w'] = 0
-        for i in range(0,self.para["size"]):
-            for j in range(0,self.para["size"]):
-                 self[i][j] = tempgame[i][j]
-
-        self.move_left()
-        if tempgame[:] != self[:]:
-            if self.greatestcorner()[1] != -1: cornerscore['a'] = 1
-            spacescore['a'] = self.countempty()
-        else: spacescore['a'] = 0
-        for i in range(0,self.para["size"]):
-            for j in range(0,self.para["size"]):
-                 self[i][j] = tempgame[i][j]
-
-
-        self.move_down()
-        if tempgame[:] != self[:]:
-            if self.greatestcorner()[1] != -1: cornerscore['s'] = 1
-            spacescore['s'] = self.countempty()
-        else: spacescore['s'] = 0
-        for i in range(0,self.para["size"]):
-            for j in range(0,self.para["size"]):
-                 self[i][j] = tempgame[i][j]
-
-
-        self.move_right()
-        if tempgame[:] != self[:]:
-            if self.greatestcorner()[1] != -1: cornerscore['d'] = 1
-            spacescore['d'] = self.countempty()
-        else: spacescore['d'] = 0
-        for i in range(0,self.para["size"]):
-            for j in range(0,self.para["size"]):
-                 self[i][j] = tempgame[i][j]
-        #print tempgame
-        #print "= = = = ="
-        #self.printout()
-
-        movelist = list()
-        a = -1
-        for i in ['w','a','s','d']:
-            b = cornerscore[i]*self.para["size"]*self.para["size"]+spacescore[i]
-            if b > a:
-                movelist = [i]
-                a = b
-            elif b==a:
-                movelist.append(i)
-        if len(movelist) > 1:
-            move = random.choice(movelist)
-        else:
-            move = movelist[0]
-    #variable control
-        #print cornerscore
-        #print spacescore
-        return move
+#
+    # #Find greatest corner
+    # def greatestcorner(self):
+        # a = [-1,-1]
+        # if self[0][0] == self.find_max()['value']:
+            # a[0] = 0
+            # a[1] = 0
+        # elif self[0][self.para["size"]-1] == self.find_max()['value']:
+            # a[0] = 0
+            # a[1] = self.para["size"] - 1
+        # elif self[self.para["size"]-1][0] == self.find_max()['value']:
+            # a[0] = self.para["size"] - 1
+            # a[1] = 0
+        # elif self[self.para["size"]-1][self.para["size"]-1] == self.find_max()['value']:
+            # a[0] = self.para["size"] - 1
+            # a[1] = self.para["size"] - 1
+        # return a
+    # #Check possiblity of moving greatest entry to the corner
+    # def _2048_naivesolver(self):
+        # cornerscore = {'w':0,'a':0,'s':0,'d':0}
+        # spacescore = {'w':0,'a':0,'s':0,'d':0}
+#
+        # tempgame = list()
+#
+        # #print "got herer!!!!!!!!!!!!!!"
+        # for i in range(0,self.para["size"]):
+            # tempgame.append(self[i][:])
+        # #print tempgame
+        # self.move_up()
+        # #print "get here naivesolver!!!1"
+        # if tempgame[:] != self[:]:
+            # if self.greatestcorner()[1] != -1: cornerscore['w'] = 1
+            # spacescore['w'] = self.countempty()
+        # else: spacescore['w'] = 0
+        # for i in range(0,self.para["size"]):
+            # for j in range(0,self.para["size"]):
+                 # self[i][j] = tempgame[i][j]
+#
+        # self.move_left()
+        # if tempgame[:] != self[:]:
+            # if self.greatestcorner()[1] != -1: cornerscore['a'] = 1
+            # spacescore['a'] = self.countempty()
+        # else: spacescore['a'] = 0
+        # for i in range(0,self.para["size"]):
+            # for j in range(0,self.para["size"]):
+                 # self[i][j] = tempgame[i][j]
+#
+#
+        # self.move_down()
+        # if tempgame[:] != self[:]:
+            # if self.greatestcorner()[1] != -1: cornerscore['s'] = 1
+            # spacescore['s'] = self.countempty()
+        # else: spacescore['s'] = 0
+        # for i in range(0,self.para["size"]):
+            # for j in range(0,self.para["size"]):
+                 # self[i][j] = tempgame[i][j]
+#
+#
+        # self.move_right()
+        # if tempgame[:] != self[:]:
+            # if self.greatestcorner()[1] != -1: cornerscore['d'] = 1
+            # spacescore['d'] = self.countempty()
+        # else: spacescore['d'] = 0
+        # for i in range(0,self.para["size"]):
+            # for j in range(0,self.para["size"]):
+                 # self[i][j] = tempgame[i][j]
+        # #print tempgame
+        # #print "= = = = ="
+        # #self.printout()
+#
+        # movelist = list()
+        # a = -1
+        # for i in ['w','a','s','d']:
+            # b = cornerscore[i]*self.para["size"]*self.para["size"]+spacescore[i]
+            # if b > a:
+                # movelist = [i]
+                # a = b
+            # elif b==a:
+                # movelist.append(i)
+        # if len(movelist) > 1:
+            # move = random.choice(movelist)
+        # else:
+            # move = movelist[0]
+    # #variable control
+        # #print cornerscore
+        # #print spacescore
+        # return move
 
     #########plaey a whole game and record the process ######
 
     def gameplay(self,choicefunc):
         #print "here i am "
         onegame = list()
-        self.allzero()
-        self.next()
-        self.next()
+        game = Game()
+        game.allzero()
+        game.next()
+        game.next()
         tag = 0
         while tag == 0:
-            onestep = self[0][:]
+            onestep = game[0][:]
             for i in range(1,self.para["size"]):
                 onestep = onestep + self[i][:]
-            #self.printout()
             move = choicefunc()
-            #print "get here gameplay!!!!!!!!!!"
             onestep.append(move)
             onegame.append(onestep)
             #print move
