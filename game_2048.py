@@ -31,6 +31,9 @@ class Board(list):
         self.next()
         self.next()
 
+    def load_board(self,board):
+        self[:] = board
+
 # update zero entries list
     def _update_zero_entries_list(self):
         self._zero_entries_list = list()
@@ -167,6 +170,7 @@ class Board(list):
                    temp.append(self[i][j])
             for j in range(0,self._para["size"]):
                    self[i][self._para["size"]-j-1] = temp[j]
+
     def move(self, action):
         temp = list()
         temp[:] = self[:]
@@ -217,18 +221,20 @@ class Game:
 
     def _play(self):
         endgame_flag = self._board.gameend()
-        while endgame == 0:
-            order = input('Your Move(wsad,s:stop): ')
-            if order in ['w','s','a','d']:
-                self.push(self._board,order)
-                if self._board.move(order):
-                    self._board.next()
-                else
-            elif order == 's':
+        while endgame_flag == 0:
+            self._board.print_board()
+            order = input('Your Move(wsad,e:exit): ')
+            while order != 'e' and self._board.move(order) == 0:
+                order = input('Your Move(wsad,e:exit): ')
+                if order == 'e':
+                    break
+            if order == 'e':
                 break
+            self.push(order)
             endgame_flag = self._board.gameend()
 
         if endgame_flag == 1:
+            self._board.print_board()
             print('Game over!')
         if input('Do you want to save the game?(y/n) ') == 'y':
             self.save(input('Name of the game: '))
@@ -237,263 +243,75 @@ class Game:
     def save(self,filename):
         with open(self.pow+filename,'w') as f:
             for line in self._game:
-                for char in line:
-                f.write(str(char)+' ')
+                f.write(str(line))
                 f.write('\n')
+        with open(self.pow+filename+'.para','w') as f:
+            f.write(str(self._board.para))
 
-    def finaldata_foutput(self,filename):
-        try:
-            fo = open(filename,'w')
-            #print self.data
-            for onegame in self.finaldata:
-                for i in onegame:
-                    s = str(i,' ')
-                    fo.write(s)
-                fo.write('\n')
-            fo.close()
-        except:
-            print("Output to ",filename," failed.")
+    def _load_game(self,filename):
+        with open(self.pow+filename,'r') as f:
+            for line in f:
+                self._game.append(eval(line))
+        with open(self.pow+filename+'.para','r') as f:
+            self._board = Board(eval(f.read()))
 
-#
-    # #Find greatest corner
-    # def greatestcorner(self):
-        # a = [-1,-1]
-        # if self[0][0] == self.find_max()['value']:
-            # a[0] = 0
-            # a[1] = 0
-        # elif self[0][self.para["size"]-1] == self.find_max()['value']:
-            # a[0] = 0
-            # a[1] = self.para["size"] - 1
-        # elif self[self.para["size"]-1][0] == self.find_max()['value']:
-            # a[0] = self.para["size"] - 1
-            # a[1] = 0
-        # elif self[self.para["size"]-1][self.para["size"]-1] == self.find_max()['value']:
-            # a[0] = self.para["size"] - 1
-            # a[1] = self.para["size"] - 1
-        # return a
-    # #Check possiblity of moving greatest entry to the corner
-    # def _2048_naivesolver(self):
-        # cornerscore = {'w':0,'a':0,'s':0,'d':0}
-        # spacescore = {'w':0,'a':0,'s':0,'d':0}
-#
-        # tempgame = list()
-#
-        # #print "got herer!!!!!!!!!!!!!!"
-        # for i in range(0,self.para["size"]):
-            # tempgame.append(self[i][:])
-        # #print tempgame
-        # self.move_up()
-        # #print "get here naivesolver!!!1"
-        # if tempgame[:] != self[:]:
-            # if self.greatestcorner()[1] != -1: cornerscore['w'] = 1
-            # spacescore['w'] = self.countempty()
-        # else: spacescore['w'] = 0
-        # for i in range(0,self.para["size"]):
-            # for j in range(0,self.para["size"]):
-                 # self[i][j] = tempgame[i][j]
-#
-        # self.move_left()
-        # if tempgame[:] != self[:]:
-            # if self.greatestcorner()[1] != -1: cornerscore['a'] = 1
-            # spacescore['a'] = self.countempty()
-        # else: spacescore['a'] = 0
-        # for i in range(0,self.para["size"]):
-            # for j in range(0,self.para["size"]):
-                 # self[i][j] = tempgame[i][j]
-#
-#
-        # self.move_down()
-        # if tempgame[:] != self[:]:
-            # if self.greatestcorner()[1] != -1: cornerscore['s'] = 1
-            # spacescore['s'] = self.countempty()
-        # else: spacescore['s'] = 0
-        # for i in range(0,self.para["size"]):
-            # for j in range(0,self.para["size"]):
-                 # self[i][j] = tempgame[i][j]
-#
-#
-        # self.move_right()
-        # if tempgame[:] != self[:]:
-            # if self.greatestcorner()[1] != -1: cornerscore['d'] = 1
-            # spacescore['d'] = self.countempty()
-        # else: spacescore['d'] = 0
-        # for i in range(0,self.para["size"]):
-            # for j in range(0,self.para["size"]):
-                 # self[i][j] = tempgame[i][j]
-        # #print tempgame
-        # #print "= = = = ="
-        # #self.printout()
-#
-        # movelist = list()
-        # a = -1
-        # for i in ['w','a','s','d']:
-            # b = cornerscore[i]*self.para["size"]*self.para["size"]+spacescore[i]
-            # if b > a:
-                # movelist = [i]
-                # a = b
-            # elif b==a:
-                # movelist.append(i)
-        # if len(movelist) > 1:
-            # move = random.choice(movelist)
-        # else:
-            # move = movelist[0]
-    # #variable control
-        # #print cornerscore
-        # #print spacescore
-        # return move
-
-    #########plaey a whole game and record the process ######
-
-    def gameplay(self,choicefunc):
-        #print "here i am "
-        onegame = list()
-        game = Game()
-        game.allzero()
-        game.next()
-        game.next()
-        tag = 0
-        while tag == 0:
-            onestep = game[0][:]
-            for i in range(1,self.para["size"]):
-                onestep = onestep + self[i][:]
-            move = choicefunc()
-            onestep.append(move)
-            onegame.append(onestep)
-            #print move
-            if  move == 'a':
-                self.move_left()
-            elif move == 's':
-                self.move_down()
-            elif move == 'd':
-                self.move_right()
-            else: self.move_up()
-
-            self.next()
-            tag = self.gameend()
-
-        self.printout()
-
-        onestep = self[0][:]
-        for i in range(1,self.para["size"]):
-            onestep = onestep + self[i][:]
-        #onestep.append(None)
-        onegame.append(onestep)
-        return onegame,onestep
-
-
-    def _2048_mlsolver(self):
-        tempgame = list()
-        for i in range(0,self.para["size"]):
-            tempgame.extend(self[i][:])
-        tempgame = self.mgr.cleanup(tempgame)
-        movelist = self.machine.test(tempgame)
-        while True:
-            move = Msupport.weighted_choice(movelist)
-            if self.validate_move(move):
-                break
-            movelist.pop(move)
-        return move
-
-    def _2048_cnnsolver(self):
-        tempgame = list()
-        for i in range(0,self.para["size"]):
-            tempgame.extend(self[i][:])
-        tempgame = self.mgr.cleanup(tempgame)
-        movelist = self.machine.test(tempgame)
-        while True:
-            move = Msupport.weighted_choice(movelist)
-            if self.validate_move(move):
-                break
-            movelist.pop(move)
-        return move
-
-    #play only one game but collect all data
-    def oneplay(self,para_dict):
-        #print "get here oneplay"
-        onegame, gamefinal = self.gameplay(self.method_dict[para_dict["method"]])
-        #print "get here oneplay"
-        self.data.append(onegame)
-        self.finaldata.append(gamefinal)
-        try:
-            self.data_foutput(para_dict["outputfile"])
-        except:
-            print("Output to ",para_dict["data_foutputfile"]," failed.")
-
-    #play multiple games but only collect the final step data
-    def play(self,para_dict):
-        for i in range(int(para_dict["numofplay"])):
-            onegame, gamefinal = self.gameplay(self.method_dict[para_dict["method"]])
-            self.finaldata.append(gamefinal)
-        try:
-            self.finaldata_foutput(para_dict["outputfile"])
-        except:
-            print("Output to ",para_dict["outputfile"]," failed.")
-
-    #return a best game data among n many of them
-    def selectone(self,para_dict):
-        gameselected = None
-        finalselected = None
-        for i in range(int(para_dict["numperselect"])):
-            curgame, curfinal = self.gameplay(self.method_dict[para_dict["method"]])
-            if Msupport.gamebetter(curfinal,finalselected) == True:
-                gameselected = curgame
-                finalselected = curfinal
-        return gameselected, finalselected
-
-    def playselect(self,para_dict):
-        for i in range(int(para_dict["numofplay"])):
-            onegame, gamefinal = self.selectone(para_dict)
-            self.data.append(onegame)
-            self.finaldata.append(gamefinal)
-        try:
-            self.finaldata_foutput(para_dict["outputfile"])
-            self.data_foutput("output.txt")
-        except:
-            print("Output to ",para_dict["outputfile"]," failed.")
-
-    def validate_move(self,move):
-        tempgame = list()
-        for i in range(0,self.para["size"]):
-            tempgame.append(self[i][:])
-        if move == 'a':
-            self.move_left()
-        elif move == 's':
-            self.move_down()
-        elif move == 'd':
-            self.move_right()
-        elif move == 'w':
-            self.move_up()
-        else:
-            print("illegal input!")
-        if tempgame[:] != self[:]:
-            for i in range(0,self.para["size"]):
-                for j in range(0,self.para["size"]):
-                     self[i][j] = tempgame[i][j]
-            return True
-        else: return False
-
-    def push(self):
-        pass
-
-    def pop(self):
-        pass
-
-    def new_game_by_ai(self,ai_player):
-        pass
-
-    def save(self,game_name):
-        pass
-
-    def load(self):
-        # self._board = ...
+    def load(self,filename):
+        self._load_game(filename)
+        move = self.pop()
+        self._board.move(temp_move)
         self._play()
 
-    def replay(self,game_name):
-        pass
+    def push(self,move):
+        for row in self._board:
+            self._game.append(row)
+        self._game.append(move)
+
+    def pop(self,step=-1):
+        temp_board = list()
+        for idx in range(self._board.para['size']):
+            temp_board.append(self._game[step][-2-idx*n:-2-(idx+1)*n])
+        self._board.load_board(temp_board)
+        return = self._game[step][-1]
+
+    def new_game_by_ai(self,ai_player):
+        self._board = Board(parameter)
+        endgame_flag = self._board.gameend()
+        while endgame_flag == 0:
+            self._board.print_board()
+            if input('next?(y/n) ') == 'y':
+                order = ai_player.move(self._board)
+                if self._board.move(order) == 0:
+                    print('AI error.')
+                    break
+                self.push(order)
+                self._board.next()
+            else:
+                break
+            endgame_flag = self._board.gameend()
+        if endgame_flag == 1:
+            self._board.print_board()
+            print('Game over!')
+        if input('Do you want to save the game?(y/n) ') == 'y':
+            self.save(input('Name of the game: '))
+        self.idle()
+
+
+    def replay(self,filename):
+        self._load_game(filename)
+        for idx in range(len(self._game)):
+            move = self.pop(idx)
+            self._board.print_board()
+            if input('next?(y/n) ') == 'y':
+                self._board.move(move)
+            else:
+                break
+        if idx == len(self._game)-1:
+            print('Game over!')
+        else:
+            pass
+        self.idle()
 
 #The following is the main program.
 
 if __name__ == '__main__':
-    game_play = Game_play(1)
-    #game_play.naiveplay()
-    #game_play.data_foutput("output.txt")
+    game = Game()
