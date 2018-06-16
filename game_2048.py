@@ -168,6 +168,8 @@ class Board(list):
             for j in range(0,self._para["size"]):
                    self[i][self._para["size"]-j-1] = temp[j]
     def move(self, action):
+        temp = list()
+        temp[:] = self[:]
         if action == 'w':
             self._move_up()
         if action == 's':
@@ -176,58 +178,68 @@ class Board(list):
             self._move_left()
         if action == 'd':
             self._move_right()
+        if temp[:] == self[:]:
+            print('illegal move!')
+            return 0
+        return 1
 
 class Game:
-    def __init__(self, order, solvermgr):
-        self.move_dict={
-            'w':1,
-            's':2,
-            'a':3,
-            'd':4
-            }
-        self.method_dict = {
-            "naive": self._2048_naivesolver,
-            "ml": self._2048_mlsolver,
-            "cnn":self._2048_cnnsolver
-            }
-        para = Msupport.parametrize(order["para"])
-        machine = Msupport.parametrize(order["machine"])
-        self.mgr = solvermgr
-        if (para)["method"] == 'ml':
-            n_machine = solvermgr.load(machine["machinetype"],machine["machinename"])
-            self.machine = solvermgr.machines[n_machine-1]["machine"]
-        if (para)["method"] == 'cnn':
-            print("cnn")
+    """
+    this class provides interfaces of playing games by
+    human players or ai players, recording games, saving
+    games and replaying games.
+    """
+    def __init__(self):
+        self._game = list()
+        self.pow = './game_archives/'
+        self.idle()
 
+    def idle(self):
+        order = input("""Choose one from the list:
+            1: new game\n2: new game by ai\n3: load\n4: replay\n5: exit""")
+        if order == '1':
+            parameter = {'size': input('size: '),
+                'odd_2': input('odd of 2(between 0 and 1): ')}
+            self.new_game(parameter)
+        if order == '2':
+            ai_player = input('Name of the ai player: ')
+            self.new_game_by_ai(ai_player)
+        if order == '3':
+            self.load(self.pow + input('Name of the game: '))
+        if order == '4':
+            self.replay(self.pow + input('Name of the game: '))
+        if order == '5':
+            pass
 
-        parameter = list()
-        Game.__init__(self,parameter)
-        self.data = list()
-        self.finaldata = list()
+    def new_game(self,parameter):
+        self._board = Board(parameter)
+        self._play()
 
-    #countempty elements
-    # def countempty(self):
-    #     a = 0
-    #     for i in range(0,self.para["size"]):
-    #         for j in range(0,self.para["size"]):
-    #             if self[i][j] == 0:
-    #                 a = a + 1
-    #     return a
+    def _play(self):
+        endgame_flag = self._board.gameend()
+        while endgame == 0:
+            order = input('Your Move(wsad,s:stop): ')
+            if order in ['w','s','a','d']:
+                self.push(self._board,order)
+                if self._board.move(order):
+                    self._board.next()
+                else
+            elif order == 's':
+                break
+            endgame_flag = self._board.gameend()
 
+        if endgame_flag == 1:
+            print('Game over!')
+        if input('Do you want to save the game?(y/n) ') == 'y':
+            self.save(input('Name of the game: '))
+        self.idle()
 
-    def data_foutput(self,filename):
-        try:
-            fo = open(filename,'w')
-            #print self.data
-            for onegame in self.data:
-                for onestep in onegame:
-                    for i in onestep:
-                        s = str( i,' ')
-                        fo.write(s)
-                    fo.write('\n')
-            fo.close()
-        except:
-            print("Output to ",filename," failed.")
+    def save(self,filename):
+        with open(self.pow+filename,'w') as f:
+            for line in self._game:
+                for char in line:
+                f.write(str(char)+' ')
+                f.write('\n')
 
     def finaldata_foutput(self,filename):
         try:
@@ -459,6 +471,25 @@ class Game:
                      self[i][j] = tempgame[i][j]
             return True
         else: return False
+
+    def push(self):
+        pass
+
+    def pop(self):
+        pass
+
+    def new_game_by_ai(self,ai_player):
+        pass
+
+    def save(self,game_name):
+        pass
+
+    def load(self):
+        # self._board = ...
+        self._play()
+
+    def replay(self,game_name):
+        pass
 
 #The following is the main program.
 
