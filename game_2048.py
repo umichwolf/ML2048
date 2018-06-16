@@ -1,10 +1,7 @@
 #This is the game "2048".
 
-import copy
 import random
-import Msupport
-import tensorflow as tf
-import Msolver
+import copy
 
 #define the board
 class Board(list):
@@ -68,7 +65,7 @@ class Board(list):
 # generate next number
     def next(self):
         self._update_zero_entries_list()
-        temp = random.choice(self.zero_entry)
+        temp = random.choice(self._zero_entries_list)
         rand = random.uniform(0,1)
         if rand <= self._para["odd_2"]:
             self[temp[0]][temp[1]] = 2
@@ -172,8 +169,7 @@ class Board(list):
                    self[i][self._para["size"]-j-1] = temp[j]
 
     def move(self, action):
-        temp = list()
-        temp[:] = self[:]
+        temp = copy.deepcopy(self[:])
         if action == 'w':
             self._move_up()
         if action == 's':
@@ -199,11 +195,16 @@ class Game:
         self.idle()
 
     def idle(self):
-        order = input("""Choose one from the list:
-            1: new game\n2: new game by ai\n3: load\n4: replay\n5: exit""")
+        order = input(
+"""Choose one from the list:
+    1: new game
+    2: new game by ai
+    3: load
+    4: replay
+    5: exit\n""")
         if order == '1':
-            parameter = {'size': input('size: '),
-                'odd_2': input('odd of 2(between 0 and 1): ')}
+            parameter = {'size': eval(input('size: ')),
+                'odd_2': eval(input('odd of 2(between 0 and 1): '))}
             self.new_game(parameter)
         if order == '2':
             ai_player = input('Name of the ai player: ')
@@ -271,7 +272,7 @@ class Game:
         for idx in range(self._board.para['size']):
             temp_board.append(self._game[step][-2-idx*n:-2-(idx+1)*n])
         self._board.load_board(temp_board)
-        return = self._game[step][-1]
+        return self._game[step][-1]
 
     def new_game_by_ai(self,ai_player):
         self._board = Board(parameter)
