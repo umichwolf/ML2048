@@ -190,11 +190,11 @@ class Game:
     games and replaying games.
     """
     def __init__(self):
-        self._game = list()
         self.pow = './game_archives/'
         self.idle()
 
     def idle(self):
+        self._game = list()
         order = input(
 """Choose one from the list:
     1: new game
@@ -210,9 +210,9 @@ class Game:
             ai_player = input('Name of the ai player: ')
             self.new_game_by_ai(ai_player)
         if order == '3':
-            self.load(self.pow + input('Name of the game: '))
+            self.load(input('Name of the game: '))
         if order == '4':
-            self.replay(self.pow + input('Name of the game: '))
+            self.replay(input('Name of the game: '))
         if order == '5':
             pass
 
@@ -224,6 +224,7 @@ class Game:
         endgame_flag = self._board.gameend()
         while endgame_flag == 0:
             self._board.print_board()
+            self.push()
             order = input('Your Move(wsad,e:exit): ')
             while order != 'e' and self._board.move(order) == 0:
                 order = input('Your Move(wsad,e:exit): ')
@@ -232,6 +233,7 @@ class Game:
             if order == 'e':
                 break
             self.push(order)
+            self._board.next()
             endgame_flag = self._board.gameend()
 
         if endgame_flag == 1:
@@ -258,21 +260,37 @@ class Game:
 
     def load(self,filename):
         self._load_game(filename)
-        move = self.pop()
-        self._board.move(temp_move)
+        self.pop()
         self._play()
 
-    def push(self,move):
-        for row in self._board:
-            self._game.append(row)
-        self._game.append(move)
+    def push(self,move=None):
+        temp = []
+        if move==None:
+            for row in self._board:
+                temp.extend(row)
+            self._game.append(temp)
+        else:
+            self._game[-1].append(move)
 
-    def pop(self,step=-1):
+    def pop(self):
         temp_board = list()
-        for idx in range(self._board.para['size']):
-            temp_board.append(self._game[step][-2-idx*n:-2-(idx+1)*n])
+        n = self._board.para['size']
+        temp_row = self._game.pop()
+        for idx in range(n):
+            temp_board.append(temp_row[idx*n:(idx+1)*n])
         self._board.load_board(temp_board)
-        return self._game[step][-1]
+
+    def read(self,idx):
+        temp_board = list()
+        n = self._board.para['size']
+        temp_row = self._game[idx]
+        for jdx in range(n):
+            temp_board.append(temp_row[jdx*n:(jdx+1)*n])
+        self._board.load_board(temp_board)
+        if len(temp_row) == n*n+1:
+            return self._game[idx][-1]
+        else:
+            return None
 
     def new_game_by_ai(self,ai_player):
         self._board = Board(parameter)
@@ -296,20 +314,19 @@ class Game:
             self.save(input('Name of the game: '))
         self.idle()
 
-
     def replay(self,filename):
         self._load_game(filename)
         for idx in range(len(self._game)):
-            move = self.pop(idx)
+            move = self.read(idx)
             self._board.print_board()
+            if move == None:
+                print('Game over!')
+                break
+            print(move)
             if input('next?(y/n) ') == 'y':
                 self._board.move(move)
             else:
                 break
-        if idx == len(self._game)-1:
-            print('Game over!')
-        else:
-            pass
         self.idle()
 
 #The following is the main program.
