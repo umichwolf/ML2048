@@ -117,7 +117,8 @@ class Game:
 
     def new_game_by_ai(self,name,parameter):
         self._board = Board(parameter)
-        ai_player = Ai(name,parameter)
+        ai_player = Ai()
+        ai_player.new(name,parameter)
         endgame_flag = self._board.gameend()
         while endgame_flag == 0:
             self._board.print_board()
