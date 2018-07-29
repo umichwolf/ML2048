@@ -193,7 +193,7 @@ class Ai:
             'normalizer:0': self._keep_prob}
         prediction,_,_ = self._policy_graph.get_collection('output')
         result = self._policy_sess.run(prediction,feed_dict=feed_dict)
-        order = np.argsort(result)
+        order = np.argsort(result)[::-1]
         move_sequence = [self._move_list[order[0,idx]]
             for idx in range(len(order[0]))]
         return move_sequence
@@ -296,12 +296,17 @@ class Ai:
                 self._best_move = self._current_move
                 self._best_value = current_value
             return 1
-        for move in self.predict_policy(board)[:2]:
+        move_list = self.predict_policy(board)[:2]
+        if depth == self._search_depth:
+            print(move_list)
+        for move in move_list:
             if depth == self._search_depth:
                 self._current_move = move
             self._virtual_board.load_board(board)
-            self._virtual_board.move(move,quiet=1)
-            next_value = current_value + self.predict_value(self._virtual_board)
-            self._virtual_board.next()
-            board_tmp = copy.deepcopy(self._virtual_board)
-            self.search(board_tmp,depth-1,next_value)
+            if self._virtual_board.move(move,quiet=1):
+                next_value = current_value + self.predict_value(self._virtual_board)
+                self._virtual_board.next()
+                board_tmp = copy.deepcopy(self._virtual_board)
+                self.search(board_tmp,depth-1,next_value)
+            else:
+                return 1

@@ -20,9 +20,10 @@ class Game:
 """Choose one from the list:
     1: new game
     2: new game by ai
-    3: load
-    4: replay
-    5: exit\n""")
+    3: new game by ai quiet
+    4: load
+    5: replay
+    6: exit\n""")
         if order == '1':
             parameter = {'size': eval(input('size: ')),
                 'odd_2': eval(input('odd of 2(between 0 and 1): '))}
@@ -31,12 +32,17 @@ class Game:
             parameter = {'size': eval(input('size: ')),
                 'odd_2': eval(input('odd of 2(between 0 and 1): '))}
             name = input('Name of the ai player: ')
-            self.new_game_by_ai(name,parameter)
+            self.new_game_by_ai(name,parameter,0)
         if order == '3':
-            self.load(input('Name of the game: '))
+            parameter = {'size': eval(input('size: ')),
+                'odd_2': eval(input('odd of 2(between 0 and 1): '))}
+            name = input('Name of the ai player: ')
+            self.new_game_by_ai(name,parameter)
         if order == '4':
-            self.replay(input('Name of the game: '))
+            self.load(input('Name of the game: '))
         if order == '5':
+            self.replay(input('Name of the game: '))
+        if order == '6':
             pass
 
     def new_game(self,parameter):
@@ -115,7 +121,7 @@ class Game:
         else:
             return None
 
-    def new_game_by_ai(self,name,parameter):
+    def new_game_by_ai(self,name,parameter,quiet=1):
         self._board = Board(parameter)
         ai_player = Ai()
         ai_player.new(name,parameter)
@@ -123,7 +129,18 @@ class Game:
         while endgame_flag == 0:
             self._board.print_board()
             self.push()
-            if input('next?(y/n) ') == 'y':
+            if quiet != 1:
+                if input('next?(y/n) ') == 'y':
+                    board = copy.deepcopy(self._board)
+                    order = ai_player.move(board)
+                    if self._board.move(order) == 0:
+                        print('AI error.')
+                        break
+                    self.push(order)
+                    self._board.next()
+                else:
+                    break
+            else:
                 board = copy.deepcopy(self._board)
                 order = ai_player.move(board)
                 if self._board.move(order) == 0:
@@ -131,8 +148,6 @@ class Game:
                     break
                 self.push(order)
                 self._board.next()
-            else:
-                break
             endgame_flag = self._board.gameend()
         if endgame_flag == 1:
             self._board.print_board()
