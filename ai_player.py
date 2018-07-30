@@ -248,9 +248,9 @@ class Ai:
     def _game_type_is(self,para):
         return True if self._para == para else False
 
-    def _convert_board(self,data):
+    def _convert_board(self,board):
         size = self._para['size']
-        data = np.array(data,dtype=np.float32)
+        data = np.array(board,dtype=np.float32)
         data = np.reshape(data,(-1,size,size,1))
         return data
 
