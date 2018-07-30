@@ -1,5 +1,4 @@
 import random
-import copy
 
 #define the board
 class Board(list):
@@ -27,7 +26,9 @@ class Board(list):
         self.next()
 
     def load_board(self,board):
-        self[:] = board
+        for i in range(self._para['size']):
+            for j in range(self._para['size']):
+                self[i][j] = board[i][j]
 
 # update zero entries list
     def _update_zero_entries_list(self):
@@ -167,7 +168,9 @@ class Board(list):
                    self[i][self._para["size"]-j-1] = temp[j]
 
     def move(self, action, quiet=0):
-        temp = copy.deepcopy(self[:])
+        temp = [0] * self._para['size']
+        for i in range(self._para['size']):
+            temp[i] = self[i].copy()
         if action == 'w':
             self._move_up()
         if action == 's':

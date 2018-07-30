@@ -278,8 +278,10 @@ class Ai:
         move_list = []
         for move in self._predict_policy(data):
             self._virtual_board.load_board(board)
-            if self._virtual_board.move(move,quiet=1):
+            tag = self._virtual_board.move(move,quiet=1)
+            if tag == 1:
                 move_list.append(move)
+        print(move_list)
         return move_list
 
     def move(self,board):
@@ -303,10 +305,8 @@ class Ai:
             if depth == self._search_depth:
                 self._current_move = move
             self._virtual_board.load_board(board)
-            if self._virtual_board.move(move,quiet=1):
-                next_value = current_value + self.predict_value(self._virtual_board)
-                self._virtual_board.next()
-                board_tmp = copy.deepcopy(self._virtual_board)
-                self.search(board_tmp,depth-1,next_value)
-            else:
-                return 1
+            self._virtual_board.move(move)
+            next_value = current_value + self.predict_value(self._virtual_board)
+            self._virtual_board.next()
+            board_tmp = copy.deepcopy(self._virtual_board)
+            self.search(board_tmp,depth-1,next_value)
