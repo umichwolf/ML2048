@@ -165,7 +165,7 @@ class Ai:
                 activation = tf.nn.relu)
             loss = tf.losses.mean_squared_error(labels=tf.reshape(y,[-1,1]),
                 predictions=dense2)
-            optimizer = tf.train.AdamOptimizer(learning_rate=10)
+            optimizer = tf.train.AdamOptimizer(learning_rate=1)
             train_op = optimizer.minimize(loss=loss,
                 global_step=global_step)
             tf.add_to_collection('output',dense2)
@@ -194,7 +194,7 @@ class Ai:
             loss = tf.reduce_mean(
                 tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels,
                     logits=dense2))
-            optimizer = tf.train.AdamOptimizer(learning_rate=10)
+            optimizer = tf.train.AdamOptimizer(learning_rate=1)
             train_op = optimizer.minimize(loss=loss,
                 global_step=global_step)
             tf.add_to_collection('output',dense2)
@@ -226,12 +226,12 @@ class Ai:
         with self._value_graph.as_default():
             _,train_op,loss = self._value_graph.get_collection('output')
         for idx in range(n_iter):
-            rand_list = np.random.randint(len(data),size=batch_size)
+            rand_list = np.random.randint(len(scores),size=batch_size)
             feed_dict = {'features:0':data[rand_list,:],
                          'scores:0':scores[rand_list],
                          'keep_prob:0': self._keep_prob,
                          'normalizer:0': 1.}
-            if idx % 1000 == 1:
+            if idx % 100 == 1:
                 print('iter: {0:d}, loss: {1:.4f}'.format(
                     idx, self._value_sess.run(loss,feed_dict)))
             self._value_sess.run(train_op,feed_dict)
@@ -242,12 +242,12 @@ class Ai:
         with self._policy_graph.as_default():
             _,train_op,loss = self._policy_graph.get_collection('output')
         for idx in range(n_iter):
-            rand_list = np.random.randint(len(data),size=batch_size)
+            rand_list = np.random.randint(len(labels),size=batch_size)
             feed_dict = {'features:0':data[rand_list,:],
                          'labels:0':indices[rand_list],
                          'keep_prob:0': self._keep_prob,
                          'normalizer:0': 1}
-            if idx % 1000 == 1:
+            if idx % 100 == 1:
                 print('iter: {0:d}, loss: {1:.4f}'.format(
                     idx, self._policy_sess.run(loss,feed_dict)))
             self._policy_sess.run(train_op,feed_dict)
@@ -266,33 +266,43 @@ class Ai:
 
     def _convert_board(self,board):
         size = self._para['size']
-        data = np.array(board,dtype=np.float32)
-        data = np.reshape(data,(-1,size,size,1))
+        data = np.reshape(board,(-1,size,size,1))
         return data
 
-    def learn(self,filename,batch_size):
-        gamedata,para = self._load_game(filename)
-        if not self._game_type_is(para):
-            print('Data Type Not Match!')
-            return 0
-        p_labels = [gamedata[idx][-1] for idx in range(len(gamedata))]
-        v_scores = [gamedata[idx+self._intuition_depth][:-1].count(0)
-            for idx in range(len(gamedata)-self._intuition_depth)]
-        print(v_scores[:5])
-        data = [gamedata[idx][:-1] for idx in range(len(gamedata))]
-        print(data[:5])
+    def _log_board(self,board):
+        data = np.array(board,dtype=np.float32)
+        data = np.ma.log2(data).filled(0)
+        return data
+
+    def learn(self,batch_size,filenames):
+        p_labels = []
+        v_scores = []
+        data = []
+        for filename in filenames:
+            print(filename)
+            gamedata,para = self._load_game(filename)
+            if not self._game_type_is(para):
+                print(filename+' Data Type Not Match!')
+                continue
+            p_labels.extend([gamedata[idx][-1] for idx in range(len(gamedata))])
+            v_scores.extend([gamedata[idx+self._intuition_depth][:-1].count(0)
+                for idx in range(len(gamedata)-self._intuition_depth)])
+            data.extend([gamedata[idx][:-1] for idx in range(len(gamedata))])
+        n_iter = len(data)
+        data = self._log_board(data)
         data = self._convert_board(data)
         v_scores = np.array(v_scores)
-        n_iter = len(gamedata)
         self._fit_policy_net(data,p_labels,batch_size,n_iter)
-        self._fit_value_net(data[:-self._intuition_depth],
+        self._fit_value_net(data,
             v_scores,batch_size,n_iter)
 
     def predict_value(self,board):
+        board = self._log_board(board)
         board = self._convert_board(board)
         return self._predict_value(board)
 
     def predict_policy(self,board):
+        board = self._log_board(board)
         data = self._convert_board(board)
         move_list = []
         for move in self._predict_policy(data):
@@ -348,9 +358,10 @@ Choose the option from the list:
             ai_player = Ai()
             ai_player.load(input('name: '))
         if order == '3':
-            filename = input('game name: ')
+            filenames = input('game name: ')
+            filenames = filenames.split()
             batch_size = eval(input('epochs: '))
-            ai_player.learn(filename,batch_size)
+            ai_player.learn(batch_size,filenames)
             save_order = input('Do you want to save it? (y/n) ')
             if save_order == 'y':
                 ai_player.save()
