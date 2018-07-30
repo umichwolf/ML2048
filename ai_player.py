@@ -292,9 +292,16 @@ class Ai:
         data = self._log_board(data)
         data = self._convert_board(data)
         v_scores = np.array(v_scores)
-        self._fit_policy_net(data,p_labels,batch_size,n_iter)
-        self._fit_value_net(data,
-            v_scores,batch_size,n_iter)
+        choose_net = input(
+        '''Which net do you want to train:
+            1. policy
+            2. value
+            3. both''')
+        if choose_net != '2':
+            self._fit_policy_net(data,p_labels,batch_size,n_iter)
+        if choose_net != '1':
+            self._fit_value_net(data,
+                v_scores,batch_size,n_iter)
 
     def predict_value(self,board):
         board = self._log_board(board)
