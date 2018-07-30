@@ -1,4 +1,5 @@
 import tensorflow as tf
+import pickle
 import copy
 import numpy as np
 from board import Board
@@ -9,9 +10,10 @@ class Ai:
     policy networks and a search strategy.
     It can play 2048 games and also train itself after several games.
     """
-    def __init__(self,path='./tmp/'):
+    def __init__(self,path='./tmp/',game_path='./game_archives/'):
         self._keep_prob = 0.7
         self._path = path
+        self._game_path = game_path
         self._name = None
         self._para = None
         self._move_list = ['a','w','s','d']
@@ -49,7 +51,7 @@ class Ai:
         return {
             'name': self._name,
             'para': self._para,
-            'keep_prob': self._keep_prob,
+            # 'keep_prob': self._keep_prob,
             'search_depth': self._search_depth,
             'intuition_depth': self._intuition_depth}
 
@@ -76,7 +78,8 @@ class Ai:
             3. overwrite it ''')
             choice = input('Please select: ')
             if choice == '1':
-                self._load(name)
+                self.load(name)
+                return 1
             if choice == '2':
                 self._new(input('New name: '),search_depth,intuition_depth)
         search_depth = eval(input('Search Depth: '))
@@ -84,20 +87,33 @@ class Ai:
         self._build(name,para,search_depth,intuition_depth)
 
     def load(self,name):
-        params = np.load(self._path + name + '_value.npy')
+        with open(self._path + name + '_value.pkl','rb') as f:
+            params = pickle.load(f)
         self._build(**params)
         try:
-            saver = tf.train.Saver()
-            saver.restore(self._value_sess,self._path + name + '_value.ckpt')
-            saver.restore(self._policy_sess,self._path + name + '_policy.ckpt')
+            with self._policy_graph.as_default():
+                saver = tf.train.Saver()
+            with tf.Session() as sess:
+                saver.restore(self._policy_sess,self._path + name + '_policy')
+            with self._value_graph.as_default():
+                saver = tf.train.Saver()
+            with tf.Session() as sess:
+                saver.restore(self._value_sess,self._path + name + '_value')
         except:
             print('Restoring Variables Fails!')
 
     def save(self):
-        saver = tf.train.Saver()
-        saver.save(self._value_sess,self._path + name + '_value.ckpt')
-        saver.save(self._policy_sess,self._path + name + '_policy.ckpt')
-        np.save(self.get_params(),self._path + self._name + '_value.npy')
+        name = self._name
+        with self._policy_graph.as_default():
+            saver = tf.train.Saver()
+        with tf.Session() as sess:
+            saver.save(self._policy_sess,self._path + name + '_policy')
+        with self._value_graph.as_default():
+            saver = tf.train.Saver()
+        with tf.Session() as sess:
+            saver.save(self._value_sess,self._path + name + '_value')
+        with open(self._path + name + '_value.pkl','wb') as f:
+            pickle.dump(self.get_params(),f)
 
     def _base_model(self,x,keep_prob,normalizer):
         size = self._para['size']
@@ -138,7 +154,7 @@ class Ai:
             x = tf.placeholder(dtype=tf.float32,
                 shape=[None,size,size,1],name='features')
             y = tf.placeholder(dtype=tf.float32,
-                shape=[None,1],name='scores')
+                shape=[None],name='scores')
             keep_prob = tf.placeholder(shape=[],
                 dtype=tf.float32,name='keep_prob')
             normalizer = tf.placeholder(shape=[],dtype=tf.float32,
@@ -147,9 +163,8 @@ class Ai:
                 inputs=self._base_model(x,keep_prob,normalizer),
                 units=1,
                 activation = tf.nn.relu)
-            loss = tf.losses.mean_squared_error(labels=y,
-                predictions=dense2
-                )
+            loss = tf.losses.mean_squared_error(labels=tf.reshape(y,[-1,1]),
+                predictions=dense2)
             optimizer = tf.train.AdamOptimizer(learning_rate=10)
             train_op = optimizer.minimize(loss=loss,
                 global_step=global_step)
@@ -165,8 +180,8 @@ class Ai:
             global_step = tf.Variable(0,trainable=False,name='global')
             x = tf.placeholder(dtype=tf.float32,
                 shape=[None,size,size,1],name='features')
-            y = tf.placeholder(dtype=tf.float32,
-                shape=[None,1],name='labels')
+            y = tf.placeholder(dtype=tf.uint8,
+                shape=[None],name='labels')
             keep_prob = tf.placeholder(shape=[],
                 dtype=tf.float32,name='keep_prob')
             normalizer = tf.placeholder(shape=[],dtype=tf.float32,
@@ -175,9 +190,10 @@ class Ai:
                 inputs=self._base_model(x,keep_prob,normalizer),
                 units=4
                 )
-            loss = tf.nn.softmax_cross_entropy_with_logits_v2(labels=y,
-                logits=dense2
-                )
+            onehot_labels = tf.one_hot(indices=y,depth=4)
+            loss = tf.reduce_mean(
+                tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels,
+                    logits=dense2))
             optimizer = tf.train.AdamOptimizer(learning_rate=10)
             train_op = optimizer.minimize(loss=loss,
                 global_step=global_step)
@@ -213,8 +229,8 @@ class Ai:
             rand_list = np.random.randint(len(data),size=batch_size)
             feed_dict = {'features:0':data[rand_list,:],
                          'scores:0':scores[rand_list],
-                         'keep_prob': self._keep_prob,
-                         'normalizer': 1.}
+                         'keep_prob:0': self._keep_prob,
+                         'normalizer:0': 1.}
             if idx % 1000 == 1:
                 print('iter: {0:d}, loss: {1:.4f}'.format(
                     idx, self._value_sess.run(loss,feed_dict)))
@@ -229,8 +245,8 @@ class Ai:
             rand_list = np.random.randint(len(data),size=batch_size)
             feed_dict = {'features:0':data[rand_list,:],
                          'labels:0':indices[rand_list],
-                         'keep_prob': self._keep_prob,
-                         'normalizer': 1}
+                         'keep_prob:0': self._keep_prob,
+                         'normalizer:0': 1}
             if idx % 1000 == 1:
                 print('iter: {0:d}, loss: {1:.4f}'.format(
                     idx, self._policy_sess.run(loss,feed_dict)))
@@ -238,10 +254,10 @@ class Ai:
 
     def _load_game(self,filename):
         gamedata = []
-        with open(self.pow+filename,'r') as f:
+        with open(self._game_path+filename,'r') as f:
             for line in f:
                 gamedata.append(eval(line))
-        with open(self.pow+filename+'.para','r') as f:
+        with open(self._game_path+filename+'.para','r') as f:
             para = eval(f.read())
         return gamedata,para
 
@@ -254,20 +270,23 @@ class Ai:
         data = np.reshape(data,(-1,size,size,1))
         return data
 
-    def learn(self,filename,batch_size,n_iter):
+    def learn(self,filename,batch_size):
         gamedata,para = self._load_game(filename)
         if not self._game_type_is(para):
             print('Data Type Not Match!')
             return 0
-        p_labels = [gamedata[idx][-1] for idx in range(len(gamedata-1))]
-        v_scores = [max(game[idx+self._intuition_depth][:-1])
-            for idx in range(len(gamedata-self._intuition_depth))]
-        data = [gamedata[idx][:-1] for idx in range(len(gamedata-1))]
+        p_labels = [gamedata[idx][-1] for idx in range(len(gamedata))]
+        v_scores = [gamedata[idx+self._intuition_depth][:-1].count(0)
+            for idx in range(len(gamedata)-self._intuition_depth)]
+        print(v_scores[:5])
+        data = [gamedata[idx][:-1] for idx in range(len(gamedata))]
+        print(data[:5])
         data = self._convert_board(data)
+        v_scores = np.array(v_scores)
+        n_iter = len(gamedata)
         self._fit_policy_net(data,p_labels,batch_size,n_iter)
-        self._fit_value_net(data[:-self._intuition_depth+1],
+        self._fit_value_net(data[:-self._intuition_depth],
             v_scores,batch_size,n_iter)
-        self.save()
 
     def predict_value(self,board):
         board = self._convert_board(board)
@@ -281,7 +300,6 @@ class Ai:
             tag = self._virtual_board.move(move,quiet=1)
             if tag == 1:
                 move_list.append(move)
-        print(move_list)
         return move_list
 
     def move(self,board):
@@ -292,15 +310,13 @@ class Ai:
         return self._best_move
 
     def search(self,board,depth,current_value=0):
-        if depth == 0:
+        move_list = self.predict_policy(board)[:2]
+        if move_list == [] or depth == 0:
             print(self._current_move,current_value)
             if current_value > self._best_value:
                 self._best_move = self._current_move
                 self._best_value = current_value
             return 1
-        move_list = self.predict_policy(board)[:2]
-        if depth == self._search_depth:
-            print(move_list)
         for move in move_list:
             if depth == self._search_depth:
                 self._current_move = move
@@ -310,3 +326,36 @@ class Ai:
             self._virtual_board.next()
             board_tmp = copy.deepcopy(self._virtual_board)
             self.search(board_tmp,depth-1,next_value)
+
+def main():
+    end_flag = 0
+    while end_flag == 0:
+        order = input('''
+Choose the option from the list:
+    1. Build a new ai player
+    2. Load an ai player
+    3. Train the ai player
+    4. Exit
+    ''')
+        if order == '1':
+            name = input('name: ')
+            size = eval(input('size: '))
+            ratio = eval(input('odd of 2(between 0 and 1): '))
+            para = {'size': size, 'odd_2': ratio}
+            ai_player = Ai()
+            ai_player.new(name,para)
+        if order == '2':
+            ai_player = Ai()
+            ai_player.load(input('name: '))
+        if order == '3':
+            filename = input('game name: ')
+            batch_size = eval(input('epochs: '))
+            ai_player.learn(filename,batch_size)
+            save_order = input('Do you want to save it? (y/n) ')
+            if save_order == 'y':
+                ai_player.save()
+        if order == '4':
+            end_flag = 1
+
+if __name__ == '__main__':
+    main()
