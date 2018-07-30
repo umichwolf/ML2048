@@ -302,8 +302,8 @@ class Ai:
         return self._predict_value(board)
 
     def predict_policy(self,board):
-        board = self._log_board(board)
-        data = self._convert_board(board)
+        data = self._log_board(board)
+        data = self._convert_board(data)
         move_list = []
         for move in self._predict_policy(data):
             self._virtual_board.load_board(board)
