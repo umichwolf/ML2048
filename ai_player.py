@@ -93,12 +93,10 @@ class Ai:
         try:
             with self._policy_graph.as_default():
                 saver = tf.train.Saver()
-            with tf.Session() as sess:
-                saver.restore(self._policy_sess,self._path + name + '_policy')
+            saver.restore(self._policy_sess,self._path + name + '_policy')
             with self._value_graph.as_default():
                 saver = tf.train.Saver()
-            with tf.Session() as sess:
-                saver.restore(self._value_sess,self._path + name + '_value')
+            saver.restore(self._value_sess,self._path + name + '_value')
         except:
             print('Restoring Variables Fails!')
 
@@ -106,12 +104,10 @@ class Ai:
         name = self._name
         with self._policy_graph.as_default():
             saver = tf.train.Saver()
-        with tf.Session() as sess:
-            saver.save(self._policy_sess,self._path + name + '_policy')
+        saver.save(self._policy_sess,self._path + name + '_policy')
         with self._value_graph.as_default():
             saver = tf.train.Saver()
-        with tf.Session() as sess:
-            saver.save(self._value_sess,self._path + name + '_value')
+        saver.save(self._value_sess,self._path + name + '_value')
         with open(self._path + name + '_value.pkl','wb') as f:
             pickle.dump(self.get_params(),f)
 
@@ -165,7 +161,7 @@ class Ai:
                 activation = tf.nn.relu)
             loss = tf.losses.mean_squared_error(labels=tf.reshape(y,[-1,1]),
                 predictions=dense2)
-            optimizer = tf.train.AdamOptimizer(learning_rate=1)
+            optimizer = tf.train.AdamOptimizer(learning_rate=0.01)
             train_op = optimizer.minimize(loss=loss,
                 global_step=global_step)
             tf.add_to_collection('output',dense2)
@@ -194,7 +190,7 @@ class Ai:
             loss = tf.reduce_mean(
                 tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels,
                     logits=dense2))
-            optimizer = tf.train.AdamOptimizer(learning_rate=1)
+            optimizer = tf.train.AdamOptimizer(learning_rate=0.01)
             train_op = optimizer.minimize(loss=loss,
                 global_step=global_step)
             tf.add_to_collection('output',dense2)
@@ -231,7 +227,7 @@ class Ai:
                          'scores:0':scores[rand_list],
                          'keep_prob:0': self._keep_prob,
                          'normalizer:0': 1.}
-            if idx % 100 == 1:
+            if idx % 10 == 1:
                 print('iter: {0:d}, loss: {1:.4f}'.format(
                     idx, self._value_sess.run(loss,feed_dict)))
             self._value_sess.run(train_op,feed_dict)
@@ -247,7 +243,7 @@ class Ai:
                          'labels:0':indices[rand_list],
                          'keep_prob:0': self._keep_prob,
                          'normalizer:0': 1}
-            if idx % 100 == 1:
+            if idx % 10 == 1:
                 print('iter: {0:d}, loss: {1:.4f}'.format(
                     idx, self._policy_sess.run(loss,feed_dict)))
             self._policy_sess.run(train_op,feed_dict)
@@ -296,7 +292,8 @@ class Ai:
         '''Which net do you want to train:
             1. policy
             2. value
-            3. both''')
+            3. both
+            ''')
         if choose_net != '2':
             self._fit_policy_net(data,p_labels,batch_size,n_iter)
         if choose_net != '1':
