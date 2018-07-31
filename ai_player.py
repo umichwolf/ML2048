@@ -280,10 +280,11 @@ class Ai:
             if not self._game_type_is(para):
                 print(filename+' Data Type Not Match!')
                 continue
-            p_labels.extend([gamedata[idx][-1] for idx in range(len(gamedata))])
+            length = len(gamedata)-self._intuition_depth
+            p_labels.extend([gamedata[idx][-1] for idx in range(length)])
             v_scores.extend([gamedata[idx+self._intuition_depth][:-1].count(0)
-                for idx in range(len(gamedata)-self._intuition_depth)])
-            data.extend([gamedata[idx][:-1] for idx in range(len(gamedata))])
+                for idx in range(length)])
+            data.extend([gamedata[idx][:-1] for idx in range(length)])
         n_iter = len(data)
         data = self._log_board(data)
         data = self._convert_board(data)
