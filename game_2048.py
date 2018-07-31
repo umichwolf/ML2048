@@ -23,7 +23,9 @@ class Game:
     3: new game by ai quiet
     4: load
     5: replay
-    6: exit\n""")
+    6: auto train ai
+    0: exit
+    """)
         if order == '1':
             parameter = {'size': eval(input('size: ')),
                 'odd_2': eval(input('odd of 2(between 0 and 1): '))}
@@ -43,6 +45,8 @@ class Game:
         if order == '5':
             self.replay(input('Name of the game: '))
         if order == '6':
+            self.auto_train_ai()
+        if order == '0':
             pass
 
     def new_game(self,parameter):
@@ -123,8 +127,8 @@ class Game:
 
     def new_game_by_ai(self,name,parameter,quiet=1):
         self._board = Board(parameter)
-        ai_player = Ai()
-        ai_player.new(name,parameter)
+        player = Ai()
+        player.new(name)
         endgame_flag = self._board.gameend()
         while endgame_flag == 0:
             self._board.print_board()
@@ -132,7 +136,7 @@ class Game:
             if quiet != 1:
                 if input('next?(y/n) ') == 'y':
                     board = copy.deepcopy(self._board)
-                    order = ai_player.move(board)
+                    order = player.move(board)
                     if self._board.move(order) == 0:
                         print('AI error.')
                         break
@@ -142,7 +146,7 @@ class Game:
                     break
             else:
                 board = copy.deepcopy(self._board)
-                order = ai_player.move(board)
+                order = player.move(board)
                 if self._board.move(order) == 0:
                     print('AI error.')
                     break
@@ -170,6 +174,37 @@ class Game:
             else:
                 break
         self.idle()
+
+    def auto_train_ai(self):
+        player = Ai()
+        player.new(input('Name of the AI: '))
+        rounds = eval(input('Number of rounds: '))
+        batch_size = eval(input('Batch size: '))
+        cache_gap = 5
+        for idx in range(rounds):
+            self._game = list()
+            self._board = Board(player.para)
+            endgame_flag = self._board.gameend()
+            while endgame_flag == 0:
+                self.push()
+                board = copy.deepcopy(self._board)
+                order = player.move(board)
+                if self._board.move(order) == 0:
+                    print('AI error.')
+                    break
+                self.push(order)
+                self._board.next()
+                endgame_flag = self._board.gameend()
+            if endgame_flag == 1:
+                self._board.print_board()
+                print('Game over!')
+            self.save('cached_game'+str(idx % cache_gap))
+            if idx % cache_gap == cache_gap - 1:
+                filenames = ['cached_game'+str(i) for i in range(cache_gap)]
+                player.learn(batch_size,filenames,quiet=1)
+        player.save()
+        self.idle()
+
 
 #The following is the main program.
 

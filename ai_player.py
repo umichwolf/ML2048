@@ -69,25 +69,29 @@ class Ai:
         # else:
          #   print('Model Generated!')
 
-    def new(self,name,para):
+    def new(self,name):
         ckpt_exists = tf.train.checkpoint_exists(self._path + name + '_value')
         if ckpt_exists:
             print('''The Name Has Been Used! Do you want to
             1. load it
             2. change a name
-            3. overwrite it ''')
+            3. overwrite it
+            ''')
             choice = input('Please select: ')
             if choice == '1':
                 self.load(name)
                 return 1
             if choice == '2':
-                self._new(input('New name: '),search_depth,intuition_depth)
+                self.new(input('New name: '))
+        size = eval(input('Size: '))
+        odd_2 = eval(input('Odd of 2(between 0 and 1): '))
+        para = {'size': size, 'odd_2': odd_2}
         search_depth = eval(input('Search Depth: '))
         intuition_depth = eval(input('Intuition Depth: '))
         self._build(name,para,search_depth,intuition_depth)
 
     def load(self,name):
-        with open(self._path + name + '_value.pkl','rb') as f:
+        with open(self._path + name + '_params.pkl','rb') as f:
             params = pickle.load(f)
         self._build(**params)
         try:
@@ -108,7 +112,7 @@ class Ai:
         with self._value_graph.as_default():
             saver = tf.train.Saver()
         saver.save(self._value_sess,self._path + name + '_value')
-        with open(self._path + name + '_value.pkl','wb') as f:
+        with open(self._path + name + '_params.pkl','wb') as f:
             pickle.dump(self.get_params(),f)
 
     def _base_model(self,x,keep_prob,normalizer):
@@ -270,7 +274,7 @@ class Ai:
         data = np.ma.log2(data).filled(0)
         return data
 
-    def learn(self,batch_size,filenames):
+    def learn(self,batch_size,filenames,quiet=0):
         p_labels = []
         v_scores = []
         data = []
@@ -289,12 +293,15 @@ class Ai:
         data = self._log_board(data)
         data = self._convert_board(data)
         v_scores = np.array(v_scores)
-        choose_net = input(
-        '''Which net do you want to train:
-            1. policy
-            2. value
-            3. both
-            ''')
+        if quiet == 0:
+            choose_net = input(
+            '''Which net do you want to train:
+                1. policy
+                2. value
+                3. both
+                ''')
+        else:
+            choose_net = 3
         if choose_net != '2':
             self._fit_policy_net(data,p_labels,batch_size,n_iter)
         if choose_net != '1':
@@ -358,7 +365,7 @@ Choose the option from the list:
             ratio = eval(input('odd of 2(between 0 and 1): '))
             para = {'size': size, 'odd_2': ratio}
             ai_player = Ai()
-            ai_player.new(name,para)
+            ai_player.new(name)
         if order == '2':
             ai_player = Ai()
             ai_player.load(input('name: '))
