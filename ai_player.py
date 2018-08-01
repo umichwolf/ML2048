@@ -70,7 +70,7 @@ class Ai:
             else:
                 print('Model Generated!')
         if load == True:
-            # try:
+            try:
                 with self._policy_graph.as_default():
                     saver = tf.train.import_meta_graph(
                         self._path + name + '_policy.meta')
@@ -79,10 +79,10 @@ class Ai:
                     saver = tf.train.import_meta_graph(
                         self._path + name + '_value.meta')
                 saver.restore(self._value_sess,self._path + name + '_value')
-            # except:
-            #     print('Restoring Variables Fails!')
-            # else:
-            #     print('Model Restored!')
+            except:
+                print('Restoring Variables Fails!')
+            else:
+                print('Model Restored!')
 
 
     def new(self,name):
@@ -148,13 +148,15 @@ class Ai:
                 inputs = x,
                 filters = 10,
                 kernel_size = 2,
-                padding = 'same'
+                padding = 'same',
+                activation = tf.nn.relu
             )
             conv2 = tf.layers.conv2d(
                 inputs = conv1,
                 filters = 10,
                 kernel_size = 3,
-                padding = 'same'
+                padding = 'same',
+                activation = tf.nn.relu
             )
             flat = tf.reshape(conv2,shape=[-1,size*size*10])
             dropout1 = tf.scalar_mul(normalizer,tf.nn.dropout(x=flat,
@@ -198,14 +200,16 @@ class Ai:
                 inputs = batch1,
                 filters = 10,
                 kernel_size = 2,
-                padding = 'same'
+                padding = 'same',
+                activation = tf.nn.relu
             )
             batch2 = self._batch_norm(conv1,10)
             conv2 = tf.layers.conv2d(
                 inputs = batch2,
                 filters = 10,
                 kernel_size = 3,
-                padding = 'same'
+                padding = 'same',
+                activation = tf.nn.relu
             )
             batch3 = self._batch_norm(conv2,10)
             flat = tf.reshape(batch3,shape=[-1,size*size*10])
