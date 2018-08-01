@@ -115,21 +115,33 @@ class Ai:
         with open(self._path + name + '_params.pkl','wb') as f:
             pickle.dump(self.get_params(),f)
 
+    def _batch_norm(self,x,depth):
+        # Batch norm for convolutional maps
+        beta = tf.Variable(tf.constant(0.0, shape=[depth]), name='beta',trainable=True)
+        gamma = tf.Variable(tf.constant(0.0, shape=[depth]), name='gamma',trainable=True)
+        with tf.variable_scope('bn'):
+            batch_mean, batch_var = tf.nn.moments(x, [0,1,2], name='moments')
+            # batch_mean, batch_var = tf.nn.moments(x, [0], name='moments')
+            normed = tf.nn.batch_normalization(x, batch_mean, batch_var, beta, gamma, 1e-3)
+            return normed
+
     def _base_model(self,x,keep_prob,normalizer):
         size = self._para['size']
+        batch1 = self._batch_norm(x,1)
         W_conv1 = tf.Variable(tf.truncated_normal(shape=[2,2,1,5],
             stddev=1e-2))
         b_conv1 = tf.Variable(tf.constant(0.1,shape=[5]))
-        conv1 = tf.nn.relu(tf.nn.conv2d(input=x,
+        conv1 = tf.nn.relu(tf.nn.conv2d(input=batch1,
             filter=W_conv1,
             strides=[1,1,1,1],
             padding='SAME',
             name='conv1'
             ) + b_conv1)
+        batch2 = self._batch_norm(conv1,5)
         W_conv2 = tf.Variable(tf.truncated_normal(shape=[2,2,5,10],
             stddev=1e-2))
         b_conv2 = tf.Variable(tf.constant(0.1,shape=[10]))
-        conv2 = tf.nn.relu(tf.nn.conv2d(input=conv1,
+        conv2 = tf.nn.relu(tf.nn.conv2d(input=batch2,
             filter=W_conv2,
             strides=[1,1,1,1],
             padding='SAME',

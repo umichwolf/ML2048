@@ -199,7 +199,7 @@ class Game:
                 self._board.print_board()
                 print('Game over!')
             self.save('cached_game'+str(idx % cache_gap))
-            if idx % cache_gap == cache_gap - 1:
+            if idx >= cache_gap:
                 filenames = ['cached_game'+str(i) for i in range(cache_gap)]
                 player.learn(batch_size,filenames,quiet=1)
         player.save()
