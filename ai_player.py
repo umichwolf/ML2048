@@ -55,19 +55,35 @@ class Ai:
             'search_depth': self._search_depth,
             'intuition_depth': self._intuition_depth}
 
-    def _build(self,name,para,search_depth,intuition_depth):
+    def _build(self,name,para,search_depth,intuition_depth,load=False):
         self._name = name
         self._para = para
         self._search_depth = search_depth
         self._intuition_depth = intuition_depth
         self._virtual_board = Board(para)
-        # try:
-        self._value_model()
-        self._policy_model()
-        # except:
-         #   print('Model Initialization Fails!')
-        # else:
-         #   print('Model Generated!')
+        if load == False:
+            try:
+                self._value_model()
+                self._policy_model()
+            except:
+                print('Model Initialization Fails!')
+            else:
+                print('Model Generated!')
+        if load == True:
+            # try:
+                with self._policy_graph.as_default():
+                    saver = tf.train.import_meta_graph(
+                        self._path + name + '_policy.meta')
+                saver.restore(self._policy_sess,self._path + name + '_policy')
+                with self._value_graph.as_default():
+                    saver = tf.train.import_meta_graph(
+                        self._path + name + '_value.meta')
+                saver.restore(self._value_sess,self._path + name + '_value')
+            # except:
+            #     print('Restoring Variables Fails!')
+            # else:
+            #     print('Model Restored!')
+
 
     def new(self,name):
         ckpt_exists = tf.train.checkpoint_exists(self._path + name + '_value')
@@ -93,16 +109,7 @@ class Ai:
     def load(self,name):
         with open(self._path + name + '_params.pkl','rb') as f:
             params = pickle.load(f)
-        self._build(**params)
-        try:
-            with self._policy_graph.as_default():
-                saver = tf.train.Saver()
-            saver.restore(self._policy_sess,self._path + name + '_policy')
-            with self._value_graph.as_default():
-                saver = tf.train.Saver()
-            saver.restore(self._value_sess,self._path + name + '_value')
-        except:
-            print('Restoring Variables Fails!')
+        self._build(**params,load=True)
 
     def save(self):
         name = self._name
@@ -125,40 +132,6 @@ class Ai:
             normed = tf.nn.batch_normalization(x, batch_mean, batch_var, beta, gamma, 1e-3)
             return normed
 
-    def _base_model(self,x,keep_prob,normalizer):
-        size = self._para['size']
-        batch1 = self._batch_norm(x,1)
-        W_conv1 = tf.Variable(tf.truncated_normal(shape=[2,2,1,5],
-            stddev=1e-2))
-        b_conv1 = tf.Variable(tf.constant(0.1,shape=[5]))
-        conv1 = tf.nn.relu(tf.nn.conv2d(input=batch1,
-            filter=W_conv1,
-            strides=[1,1,1,1],
-            padding='SAME',
-            name='conv1'
-            ) + b_conv1)
-        batch2 = self._batch_norm(conv1,5)
-        W_conv2 = tf.Variable(tf.truncated_normal(shape=[2,2,5,10],
-            stddev=1e-2))
-        b_conv2 = tf.Variable(tf.constant(0.1,shape=[10]))
-        conv2 = tf.nn.relu(tf.nn.conv2d(input=batch2,
-            filter=W_conv2,
-            strides=[1,1,1,1],
-            padding='SAME',
-            name='conv2'
-            ) + b_conv2)
-        flat = tf.reshape(conv2,shape=[-1,size*size*10])
-        dropout1 = tf.scalar_mul(normalizer,tf.nn.dropout(x=flat,
-            keep_prob=keep_prob))
-        dense1 = tf.layers.dense(inputs=dropout1,
-            units=20,
-            activation = tf.nn.relu,
-            name='dense1'
-            )
-        dropout2 = tf.nn.dropout(x=dense1,
-            keep_prob=keep_prob) * normalizer
-        return dropout2
-
     def _value_model(self):
         size = self._para['size']
         with self._value_graph.as_default():
@@ -171,8 +144,30 @@ class Ai:
                 dtype=tf.float32,name='keep_prob')
             normalizer = tf.placeholder(shape=[],dtype=tf.float32,
                 name='normalizer')
+            conv1 = tf.layers.conv2d(
+                inputs = x,
+                filters = 10,
+                kernel_size = 2,
+                padding = 'same'
+            )
+            conv2 = tf.layers.conv2d(
+                inputs = conv1,
+                filters = 10,
+                kernel_size = 3,
+                padding = 'same'
+            )
+            flat = tf.reshape(conv2,shape=[-1,size*size*10])
+            dropout1 = tf.scalar_mul(normalizer,tf.nn.dropout(x=flat,
+                keep_prob=keep_prob))
+            dense1 = tf.layers.dense(inputs=dropout1,
+                units=20,
+                activation = tf.nn.relu,
+                name='dense1'
+                )
+            dropout2 = tf.nn.dropout(x=dense1,
+                keep_prob=keep_prob) * normalizer
             dense2 = tf.layers.dense(
-                inputs=self._base_model(x,keep_prob,normalizer),
+                inputs=dropout2,
                 units=1,
                 activation = tf.nn.relu)
             loss = tf.losses.mean_squared_error(labels=tf.reshape(y,[-1,1]),
@@ -198,10 +193,34 @@ class Ai:
                 dtype=tf.float32,name='keep_prob')
             normalizer = tf.placeholder(shape=[],dtype=tf.float32,
                 name='normalizer')
-            dense2 = tf.layers.dense(
-                inputs=self._base_model(x,keep_prob,normalizer),
-                units=4
+            batch1 = self._batch_norm(x,1)
+            conv1 = tf.layers.conv2d(
+                inputs = batch1,
+                filters = 10,
+                kernel_size = 2,
+                padding = 'same'
+            )
+            batch2 = self._batch_norm(conv1,10)
+            conv2 = tf.layers.conv2d(
+                inputs = batch2,
+                filters = 10,
+                kernel_size = 3,
+                padding = 'same'
+            )
+            batch3 = self._batch_norm(conv2,10)
+            flat = tf.reshape(batch3,shape=[-1,size*size*10])
+            dropout1 = tf.scalar_mul(normalizer,tf.nn.dropout(x=flat,
+                keep_prob=keep_prob))
+            dense1 = tf.layers.dense(inputs=dropout1,
+                units=20,
+                activation = tf.nn.relu,
+                name='dense1'
                 )
+            dropout2 = tf.nn.dropout(x=dense1,
+                keep_prob=keep_prob) * normalizer
+            dense2 = tf.layers.dense(
+                inputs=dropout2,
+                units=4)
             onehot_labels = tf.one_hot(indices=y,depth=4)
             loss = tf.reduce_mean(
                 tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels,
