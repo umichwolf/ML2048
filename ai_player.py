@@ -353,11 +353,11 @@ class Ai:
         data = np.ma.log2(data).filled(0)
         return data
 
-    def learn(self,batch_size,filenames,cached_gap,played_rounds,quiet=0):
+    def learn(self,batch_size,filenames,num_new_learn,played_rounds,quiet=0):
         p_labels = []
         v_scores = []
         data = []
-        self._learned_games += cached_gap
+        self._learned_games += num_new_learn
         self._total_games += played_rounds
         for filename in filenames:
             print(filename)
@@ -414,13 +414,13 @@ class Ai:
         self._best_move = None
         self._best_value = -1
         self.search(board,self._search_depth)
-        print(self._best_move)
+        # print(self._best_move)
         return self._best_move
 
     def search(self,board,depth,current_value=0):
         move_list = self.predict_policy(board)[:2]
         if move_list == [] or depth == 0:
-            print(self._current_move,current_value)
+            # print(self._current_move,current_value)
             if current_value > self._best_value:
                 self._best_move = self._current_move
                 self._best_value = current_value
