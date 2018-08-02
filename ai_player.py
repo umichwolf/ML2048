@@ -18,6 +18,7 @@ class Ai:
         self._para = None
         self._move_list = ['a','w','s','d']
         self._search_depth = None
+        self._search_width = None
         self._intuition_depth = None
         self._best_value = -1
         self._best_move = None
@@ -40,6 +41,9 @@ class Ai:
     def search_depth(self):
         return self._search_depth
     @property
+    def search_width(self):
+        return self._search_width
+    @property
     def intuition_depth(self):
         return self._intuition_depth
 
@@ -53,11 +57,13 @@ class Ai:
             'para': self._para,
             # 'keep_prob': self._keep_prob,
             'search_depth': self._search_depth,
+            'search_width': self._search_width,
             'intuition_depth': self._intuition_depth}
 
-    def _build(self,name,para,search_depth,intuition_depth,load=False):
+    def _build(self,name,para,search_depth,search_width,intuition_depth,load=False):
         self._name = name
         self._para = para
+        self._search_width = search_width
         self._search_depth = search_depth
         self._intuition_depth = intuition_depth
         self._virtual_board = Board(para)
@@ -103,8 +109,9 @@ class Ai:
         odd_2 = eval(input('Odd of 2(between 0 and 1): '))
         para = {'size': size, 'odd_2': odd_2}
         search_depth = eval(input('Search Depth: '))
+        search_width = eval(input('Search Width: '))
         intuition_depth = eval(input('Intuition Depth: '))
-        self._build(name,para,search_depth,intuition_depth)
+        self._build(name,para,search_depth,search_width,intuition_depth)
 
     def load(self,name):
         with open(self._path + name + '_params.pkl','rb') as f:
@@ -319,10 +326,12 @@ class Ai:
             if not self._game_type_is(para):
                 print(filename+' Data Type Not Match!')
                 continue
-            length = len(gamedata)-self._intuition_depth
+            length = len(gamedata)
             p_labels.extend([gamedata[idx][-1] for idx in range(length)])
-            v_scores.extend([gamedata[idx+self._intuition_depth][:-1].count(0)
-                for idx in range(length)])
+            n_zeros = [gamedata[idx][:-1].count(0) for idx in range(length)]
+            ma_zeros = [np.mean(n_zeros[i:min(i+self._intuition_depth,length)])
+                for i in range(length)]
+            v_scores.extend(ma_zeros)
             data.extend([gamedata[idx][:-1] for idx in range(length)])
         n_iter = len(data)
         data = self._log_board(data)
@@ -375,14 +384,15 @@ class Ai:
                 self._best_value = current_value
             return 1
         for move in move_list:
-            if depth == self._search_depth:
-                self._current_move = move
-            self._virtual_board.load_board(board)
-            self._virtual_board.move(move)
-            next_value = current_value + self.predict_value(self._virtual_board)
-            self._virtual_board.next()
-            board_tmp = copy.deepcopy(self._virtual_board)
-            self.search(board_tmp,depth-1,next_value)
+            for idx in range(self._search_width):
+                if depth == self._search_depth:
+                    self._current_move = move
+                self._virtual_board.load_board(board)
+                self._virtual_board.move(move)
+                self._virtual_board.next()
+                next_value = current_value + self.predict_value(self._virtual_board)
+                board_tmp = copy.deepcopy(self._virtual_board)
+                self.search(board_tmp,depth-1,next_value)
 
 def main():
     end_flag = 0
