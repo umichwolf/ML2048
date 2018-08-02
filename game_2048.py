@@ -201,14 +201,14 @@ class Game:
             if endgame_flag == 1:
                 self._board.print_board()
                 print('Game over!')
-            if np.max(self._board) >= player.best_score or player.learned_games < cache_gap:
+            if np.max(self._board) >= player.best_score:
                 self.save('cached_game'+str(counter_saved % cache_gap))
                 player.best_score = np.max(self._board)
                 counter_saved += 1
-            if counter_saved % cache_gap == cache_gap - 1:
-                filenames = ['cached_game'+str(i) for i in range(min(idx+1,cache_gap))]
+                filenames = ['cached_game'+str(i) for i in
+                    range(min(couter_saved+1,cache_gap))]
                 player.learn(batch_size,filenames,
-                    cache_gap,idx-counter_played,quiet=1)
+                    1,idx-counter_played,quiet=1)
                 counter_played = idx
                 counter_saved = 0
         player.save()
