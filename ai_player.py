@@ -20,6 +20,9 @@ class Ai:
         self._search_depth = None
         self._search_width = None
         self._intuition_depth = None
+        self._total_games = 0
+        self._learned_games = 0
+        self._best_score = 0
         self._best_value = -1
         self._best_move = None
         self._current_value = 0
@@ -46,6 +49,24 @@ class Ai:
     @property
     def intuition_depth(self):
         return self._intuition_depth
+    @property
+    def total_games(self):
+        return self._total_games
+    @property
+    def learned_games(self):
+        return self._learned_games
+    @property
+    def best_score(self):
+        return self._best_score
+    @best_score.setter
+    def best_score(self,val):
+        if val < self._best_score:
+            print("Current score is less than the player's best score! Update fails.")
+            return 0
+        else:
+            print("The player's best score is updated to {}!".format(val))
+            self._best_score = val
+
 
     def __del__(self):
         self._policy_sess.close()
@@ -58,13 +79,20 @@ class Ai:
             # 'keep_prob': self._keep_prob,
             'search_depth': self._search_depth,
             'search_width': self._search_width,
+            'total_games': self._total_games,
+            'learned_games': self._learned_games,
+            'best_score': self._best_score,
             'intuition_depth': self._intuition_depth}
 
-    def _build(self,name,para,search_depth,search_width,intuition_depth,load=False):
+    def _build(self,name,para,search_depth,search_width,intuition_depth,
+        total_games,learned_games,best_score,load=False):
         self._name = name
         self._para = para
         self._search_width = search_width
         self._search_depth = search_depth
+        self._total_games = total_games
+        self._best_score = best_score
+        self._learned_games = learned_games
         self._intuition_depth = intuition_depth
         self._virtual_board = Board(para)
         if load == False:
@@ -105,13 +133,22 @@ class Ai:
                 return 1
             if choice == '2':
                 self.new(input('New name: '))
-        size = eval(input('Size: '))
-        odd_2 = eval(input('Odd of 2(between 0 and 1): '))
-        para = {'size': size, 'odd_2': odd_2}
-        search_depth = eval(input('Search Depth: '))
-        search_width = eval(input('Search Width: '))
-        intuition_depth = eval(input('Intuition Depth: '))
-        self._build(name,para,search_depth,search_width,intuition_depth)
+        para = {
+                    'size': eval(input('Size: ')),
+                    'odd_2': eval(input('Odd of 2(between 0 and 1): '))
+                }
+        params = {
+                    'name': name,
+                    'para': para,
+                    # 'keep_prob': self._keep_prob,
+                    'search_depth': eval(input('Search Depth: ')),
+                    'search_width': eval(input('Search Width: ')),
+                    'total_games': 0,
+                    'best_score': 0,
+                    'learned_games': 0,
+                    'intuition_depth': eval(input('Intuition Depth: '))
+                  }
+        self._build(**params)
 
     def load(self,name):
         with open(self._path + name + '_params.pkl','rb') as f:
@@ -316,10 +353,12 @@ class Ai:
         data = np.ma.log2(data).filled(0)
         return data
 
-    def learn(self,batch_size,filenames,quiet=0):
+    def learn(self,batch_size,filenames,cached_gap,played_rounds,quiet=0):
         p_labels = []
         v_scores = []
         data = []
+        self._learned_games += cached_gap
+        self._total_games += played_rounds
         for filename in filenames:
             print(filename)
             gamedata,para = self._load_game(filename)
@@ -369,6 +408,9 @@ class Ai:
         return move_list
 
     def move(self,board):
+        if self._para != board.para:
+            print('The ai player cannot play the game of the given parameters!')
+            return 0
         self._best_move = None
         self._best_value = -1
         self.search(board,self._search_depth)

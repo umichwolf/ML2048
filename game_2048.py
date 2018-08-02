@@ -3,6 +3,7 @@
 import copy
 from board import Board
 from ai_player import Ai
+import numpy as np
 
 class Game:
     """
@@ -181,6 +182,8 @@ class Game:
         rounds = eval(input('Number of rounds: '))
         batch_size = eval(input('Batch size: '))
         cache_gap = 5
+        counter_saved = 0
+        counter_played = 0
         for idx in range(rounds):
             self._game = list()
             self._board = Board(player.para)
@@ -198,9 +201,16 @@ class Game:
             if endgame_flag == 1:
                 self._board.print_board()
                 print('Game over!')
-            self.save('cached_game'+str(idx % cache_gap))
-            filenames = ['cached_game'+str(i) for i in range(min(idx+1,cache_gap))]
-            player.learn(batch_size,filenames,quiet=1)
+            if np.max(self._board) >= player.best_score or player.learned_games < cache_gap:
+                self.save('cached_game'+str(counter_saved % cache_gap))
+                player.best_score = np.max(self._board)
+                counter_saved += 1
+            if counter_saved % cache_gap == cache_gap - 1:
+                filenames = ['cached_game'+str(i) for i in range(min(idx+1,cache_gap))]
+                player.learn(batch_size,filenames,
+                    cache_gap,idx-counter_played,quiet=1)
+                counter_played = idx
+                counter_saved = 0
         player.save()
         self.idle()
 
