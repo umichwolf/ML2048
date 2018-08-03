@@ -22,7 +22,9 @@ class Ai:
         self._intuition_depth = None
         self._total_games = 0
         self._learned_games = 0
-        self._best_score = 0
+        self._score_list_size = 5
+        self._best_score_list = [0] * self._score_list_size
+        self._cache_game_list = list(range(self._score_list_size))[::-1]
         self._best_value = -1
         self._best_move = None
         self._current_value = 0
@@ -56,17 +58,11 @@ class Ai:
     def learned_games(self):
         return self._learned_games
     @property
-    def best_score(self):
-        return self._best_score
-    @best_score.setter
-    def best_score(self,val):
-        if val < self._best_score:
-            print("Current score is less than the player's best score! Update fails.")
-            return 0
-        else:
-            print("The player's best score is updated to {}!".format(val))
-            self._best_score = val
-
+    def best_score_list(self):
+        return self._best_score_list
+    @property
+    def score_list_size(self):
+        return self._score_list_size
 
     def __del__(self):
         self._policy_sess.close()
@@ -81,17 +77,31 @@ class Ai:
             'search_width': self._search_width,
             'total_games': self._total_games,
             'learned_games': self._learned_games,
-            'best_score': self._best_score,
+            'best_score_list': self._best_score_list,
+            'score_list_size': self._score_list_size,
             'intuition_depth': self._intuition_depth}
 
+    def insert_cache_queue(self,score):
+        self._total_games += 1
+        for i in range(self._score_list_size):
+            if score >= self._best_score_list[i]:
+                self._learned_games += 1
+                self._best_score_list.insert(i,score)
+                self._best_score_list.pop()
+                position = self._cache_game_list.pop()
+                self._cache_game_list.insert(i,position)
+                return position
+        return -1
+
     def _build(self,name,para,search_depth,search_width,intuition_depth,
-        total_games,learned_games,best_score,load=False):
+        total_games,learned_games,best_score_list,score_list_size,load=False):
         self._name = name
         self._para = para
         self._search_width = search_width
         self._search_depth = search_depth
         self._total_games = total_games
-        self._best_score = best_score
+        self._score_list_size = score_list_size
+        self._best_score_list = best_score_list
         self._learned_games = learned_games
         self._intuition_depth = intuition_depth
         self._virtual_board = Board(para)
@@ -137,6 +147,7 @@ class Ai:
                     'size': eval(input('Size: ')),
                     'odd_2': eval(input('Odd of 2(between 0 and 1): '))
                 }
+        list_length = eval(input('Score List Length: '))
         params = {
                     'name': name,
                     'para': para,
@@ -144,7 +155,8 @@ class Ai:
                     'search_depth': eval(input('Search Depth: ')),
                     'search_width': eval(input('Search Width: ')),
                     'total_games': 0,
-                    'best_score': 0,
+                    'score_list_size': list_length,
+                    'best_score_list': [0]*list_length,
                     'learned_games': 0,
                     'intuition_depth': eval(input('Intuition Depth: '))
                   }
@@ -353,12 +365,10 @@ class Ai:
         data = np.ma.log2(data).filled(0)
         return data
 
-    def learn(self,batch_size,filenames,num_new_learn,played_rounds,quiet=0):
+    def learn(self,batch_size,filenames,quiet=0):
         p_labels = []
         v_scores = []
         data = []
-        self._learned_games += num_new_learn
-        self._total_games += played_rounds
         for filename in filenames:
             print(filename)
             gamedata,para = self._load_game(filename)

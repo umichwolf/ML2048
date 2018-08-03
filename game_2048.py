@@ -176,27 +176,12 @@ class Game:
                 break
         self.idle()
 
-    def _insert_cache_queue(self,score):
-        cache_max = len(self._cache_score)
-        for i in range(cache_max):
-            if score >= self._cache_score[i]:
-                self._cache_score.insert(i,score)
-                position = self._cache_queue.pop()
-                self._cache_queue.insert(i,position)
-                return position
-        return -1
-
     def auto_train_ai(self):
-        cache_max = 5
-        self._cache_score = [0] * cache_max
-        self._cache_queue = list(range(cache_max))[::-1]
         player = Ai()
         player.new(input('Name of the AI: '))
         rounds = eval(input('Number of rounds: '))
         batch_size = eval(input('Batch size: '))
-        cache_queue = []
         counter_saved = 0
-        counter_played = -1
         for idx in range(rounds):
             self._game = list()
             self._board = Board(player.para)
@@ -214,17 +199,13 @@ class Game:
             if endgame_flag == 1:
                 self._board.print_board()
                 print('Game over!')
-            position = self._insert_cache_queue(np.max(self._board))
+            position = player.insert_cache_queue(np.sum(self._board))
             if position > -1:
                 self.save('cached_game'+str(position))
-                if player.best_score < np.max(self._board):
-                    player.best_score = np.max(self._board)
                 counter_saved += 1
                 filenames = ['cached_game'+str(i) for i in
-                    range(min(counter_saved,cache_max))]
-                player.learn(batch_size,filenames,
-                    1,idx-counter_played,quiet=1)
-                counter_played = idx
+                    range(min(counter_saved,player.score_list_size))]
+                player.learn(batch_size,filenames,quiet=1)
         player.save()
         self.idle()
 
