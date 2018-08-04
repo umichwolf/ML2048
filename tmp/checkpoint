@@ -1,2 +1,2 @@
-model_checkpoint_path: "autoai_value"
-all_model_checkpoint_paths: "autoai_value"
+model_checkpoint_path: "myai_value"
+all_model_checkpoint_paths: "myai_value"

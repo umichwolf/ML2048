@@ -428,7 +428,8 @@ class Ai:
         return self._best_move
 
     def search(self,board,depth,current_value=0):
-        move_list = self.predict_policy(board)[:2]
+        # move_list = self.predict_policy(board)[:4]
+        move_list = self._move_list
         if move_list == [] or depth == 0:
             # print(self._current_move,current_value)
             if current_value > self._best_value:

@@ -200,11 +200,12 @@ class Game:
                 self._board.print_board()
                 print('Game over!')
             position = player.insert_cache_queue(np.sum(self._board))
-            if position > -1:
+            if position > -2:
                 self.save('cached_game'+str(position))
-                counter_saved += 1
-                filenames = ['cached_game'+str(i) for i in
-                    range(min(counter_saved,player.score_list_size))]
+                # counter_saved += 1
+                # filenames = ['cached_game'+str(i) for i in
+                # range(min(counter_saved,player.score_list_size))]
+                filenames = ['cached_game'+str(position)]
                 player.learn(batch_size,filenames,quiet=1)
         player.save()
         self.idle()
