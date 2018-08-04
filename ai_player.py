@@ -24,7 +24,6 @@ class Ai:
         self._learned_games = 0
         self._score_list_size = 5
         self._best_score_list = [0] * self._score_list_size
-        self._cache_game_list = list(range(self._score_list_size))[::-1]
         self._best_value = -1
         self._best_move = None
         self._current_value = 0
@@ -102,6 +101,7 @@ class Ai:
         self._total_games = total_games
         self._score_list_size = score_list_size
         self._best_score_list = best_score_list
+        self._cache_game_list = list(range(self._score_list_size))[::-1]
         self._learned_games = learned_games
         self._intuition_depth = intuition_depth
         self._virtual_board = Board(para)
@@ -410,7 +410,8 @@ class Ai:
         data = self._log_board(board)
         data = self._convert_board(data)
         move_list = []
-        for move in self._predict_policy(data):
+        # for move in self._predict_policy(data):
+        for move in self._move_list:
             self._virtual_board.load_board(board)
             tag = self._virtual_board.move(move,quiet=1)
             if tag == 1:
@@ -428,8 +429,7 @@ class Ai:
         return self._best_move
 
     def search(self,board,depth,current_value=0):
-        # move_list = self.predict_policy(board)[:4]
-        move_list = self._move_list
+        move_list = self.predict_policy(board)[:4]
         if move_list == [] or depth == 0:
             # print(self._current_move,current_value)
             if current_value > self._best_value:
