@@ -1,4 +1,5 @@
 import random
+import time
 
 #define the board
 class Board(list):
@@ -64,6 +65,7 @@ class Board(list):
 # generate next number
     def next(self):
         self._update_zero_entries_list()
+        random.seed(time.time())
         temp = random.choice(self._zero_entries_list)
         rand = random.uniform(0,1)
         if rand <= self._para["odd_2"]:
