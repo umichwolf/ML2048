@@ -24,10 +24,6 @@ class Ai:
         self._learned_games = 0
         self._score_list_size = 5
         self._best_score_list = [0] * self._score_list_size
-        self._best_value = -1
-        self._best_move = None
-        self._current_value = 0
-        self._current_move = None
         self._policy_graph = tf.Graph()
         tf.reset_default_graph()
         self._value_graph = tf.Graph()
@@ -377,12 +373,12 @@ class Ai:
                 continue
             length = len(gamedata)
             p_labels.extend([gamedata[idx][-1] for idx in range(length)])
-            n_zeros = [gamedata[idx][:-1].count(0) for idx in range(length)]
-            # ma_zeros = [np.mean(n_zeros[i:min(i+self._intuition_depth,length)])
+            n_zeroes = [gamedata[idx][:-1].count(0) for idx in range(length)]
+            # ma_zeros = [np.mean(n_zeroes[i:min(i+self._intuition_depth,length)])
              #   for i in range(length)]
-            n_zeroes = n_zeros[self._intuition_depth:]
+            n_zeroes = n_zeroes[self._intuition_depth:]
             n_zeroes.extend([0]*self._intuition_depth)
-            v_scores.extend(n_zeros)
+            v_scores.extend(n_zeroes)
             data.extend([gamedata[idx][:-1] for idx in range(length)])
         n_iter = len(data)
         data = self._log_board(data)
@@ -412,8 +408,8 @@ class Ai:
         data = self._log_board(board)
         data = self._convert_board(data)
         move_list = []
-        # for move in self._predict_policy(data):
-        for move in self._move_list:
+        for move in self._predict_policy(data):
+        # for move in self._move_list:
             self._virtual_board.load_board(board)
             tag = self._virtual_board.move(move,quiet=1)
             if tag == 1:
@@ -425,29 +421,35 @@ class Ai:
             print('The ai player cannot play the game of the given parameters!')
             return 0
         self._best_move = None
+        self._current_move = None
         self._best_value = -1
+        self._current_value = 0
         self.search(board,self._search_depth)
         # print(self._best_move)
         return self._best_move
 
-    def search(self,board,depth,current_value=0):
-        move_list = self.predict_policy(board)[:4]
-        if move_list == [] or depth == 0:
-            # print(self._current_move,current_value)
-            if current_value > self._best_value:
-                self._best_move = self._current_move
-                self._best_value = current_value
+    def search(self,board,depth):
+        if depth == self._search_depth:
+            move_list = self.predict_policy(board)[:4]
+        else:
+            move_list = self.predict_policy(board)[:1]
+        if move_list == []:
+            self._current_value += 0
+        if depth == 0:
+            self._current_value += self.predict_value(board)
             return 1
         for move in move_list:
             for idx in range(self._search_width):
                 if depth == self._search_depth:
+                    if self._best_value < self._current_value:
+                        self._best_move = self._current_move
+                    self._current_value = 0
                     self._current_move = move
                 self._virtual_board.load_board(board)
                 self._virtual_board.move(move)
                 self._virtual_board.next()
-                next_value = current_value + self.predict_value(self._virtual_board)
                 board_tmp = copy.deepcopy(self._virtual_board)
-                self.search(board_tmp,depth-1,next_value)
+                self.search(board_tmp,depth-1)
 
 def main():
     end_flag = 0
