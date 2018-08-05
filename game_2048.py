@@ -135,7 +135,7 @@ class Game:
             self._board.print_board()
             self.push()
             if quiet != 1:
-                if input('next?(y/n) ') == 'y':
+                if input('next?(y/n) ') != 'n':
                     board = copy.deepcopy(self._board)
                     order = player.move(board)
                     if self._board.move(order) == 0:
@@ -199,7 +199,7 @@ class Game:
             if endgame_flag == 1:
                 self._board.print_board()
                 print('Game over!')
-            position = player.insert_cache_queue(np.sum(self._board))
+            position = player.insert_cache_queue(np.max(self._board))
             # position > -2 means every game will be learned
             # to learn newly inserted games set to > -1
             if position > -2:

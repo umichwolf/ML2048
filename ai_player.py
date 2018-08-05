@@ -373,17 +373,18 @@ class Ai:
                 continue
             length = len(gamedata)
             p_labels.extend([gamedata[idx][-1] for idx in range(length)])
-            n_zeroes = [gamedata[idx][:-1].count(0) for idx in range(length)]
+            # n_zeroes = [gamedata[idx][:-1].count(0) for idx in range(length)]
             # ma_zeros = [np.mean(n_zeroes[i:min(i+self._intuition_depth,length)])
              #   for i in range(length)]
-            n_zeroes = n_zeroes[self._intuition_depth:]
-            n_zeroes.extend([0]*self._intuition_depth)
-            v_scores.extend(n_zeroes)
+            max_value = [max(gamedata[-1][:-1])] * length
+            # n_zeroes = n_zeroes[self._intuition_depth:]
+            # n_zeroes.extend([0]*self._intuition_depth)
+            v_scores.extend(max_value)
             data.extend([gamedata[idx][:-1] for idx in range(length)])
         n_iter = len(data)
         data = self._log_board(data)
         data = self._convert_board(data)
-        v_scores = np.array(v_scores)
+        v_scores = self._log_board(v_scores)
         if quiet == 0:
             choose_net = input(
             '''Which net do you want to train:
