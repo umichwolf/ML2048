@@ -385,6 +385,7 @@ class Ai:
         data = self._log_board(data)
         data = self._convert_board(data)
         v_scores = self._log_board(v_scores)
+        # v_scores = np.array(v_scores)
         if quiet == 0:
             choose_net = input(
             '''Which net do you want to train:
@@ -439,17 +440,19 @@ class Ai:
             self._current_value += self.predict_value(board)
             return 1
         for move in move_list:
+            if depth == self._search_depth:
+                self._current_value = 0
+                self._current_move = move
             for idx in range(self._search_width):
-                if depth == self._search_depth:
-                    if self._best_value < self._current_value:
-                        self._best_move = self._current_move
-                    self._current_value = 0
-                    self._current_move = move
                 self._virtual_board.load_board(board)
                 self._virtual_board.move(move)
                 self._virtual_board.next()
                 board_tmp = copy.deepcopy(self._virtual_board)
                 self.search(board_tmp,depth-1)
+            if depth == self._search_depth:
+                if self._best_value < self._current_value:
+                    self._best_move = self._current_move
+                    self._best_value = self._current_value
 
 def main():
     end_flag = 0
