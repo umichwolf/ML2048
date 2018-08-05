@@ -409,7 +409,6 @@ class Ai:
         data = self._convert_board(data)
         move_list = []
         for move in self._predict_policy(data):
-        # for move in self._move_list:
             self._virtual_board.load_board(board)
             tag = self._virtual_board.move(move,quiet=1)
             if tag == 1:
