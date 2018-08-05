@@ -373,13 +373,13 @@ class Ai:
                 continue
             length = len(gamedata)
             p_labels.extend([gamedata[idx][-1] for idx in range(length)])
-            # n_zeroes = [gamedata[idx][:-1].count(0) for idx in range(length)]
-            # ma_zeros = [np.mean(n_zeroes[i:min(i+self._intuition_depth,length)])
-             #   for i in range(length)]
-            max_value = [max(gamedata[-1][:-1])] * length
+            n_zeroes = [gamedata[idx][:-1].count(0) for idx in range(length)]
+            ma_zeroes = [np.sum(n_zeroes[i:])
+                for i in range(length)]
+            # max_value = [max(gamedata[-1][:-1])] * length
             # n_zeroes = n_zeroes[self._intuition_depth:]
             # n_zeroes.extend([0]*self._intuition_depth)
-            v_scores.extend(max_value)
+            v_scores.extend(ma_zeroes)
             data.extend([gamedata[idx][:-1] for idx in range(length)])
         n_iter = len(data)
         data = self._log_board(data)
