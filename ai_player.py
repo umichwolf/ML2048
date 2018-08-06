@@ -247,24 +247,24 @@ class Ai:
                 dtype=tf.float32,name='keep_prob')
             normalizer = tf.placeholder(shape=[],dtype=tf.float32,
                 name='normalizer')
-            batch1 = self._batch_norm(x,1)
+            # batch1 = self._batch_norm(x,1)
             conv1 = tf.layers.conv2d(
-                inputs = batch1,
+                inputs = x,
                 filters = 10,
                 kernel_size = 2,
                 padding = 'same',
                 activation = tf.nn.relu
             )
-            batch2 = self._batch_norm(conv1,10)
+            # batch2 = self._batch_norm(conv1,10)
             conv2 = tf.layers.conv2d(
-                inputs = batch2,
+                inputs = conv1,
                 filters = 10,
                 kernel_size = 3,
                 padding = 'same',
                 activation = tf.nn.relu
             )
-            batch3 = self._batch_norm(conv2,10)
-            flat = tf.reshape(batch3,shape=[-1,size*size*10])
+            # batch3 = self._batch_norm(conv2,10)
+            flat = tf.reshape(conv2,shape=[-1,size*size*10])
             dropout1 = tf.scalar_mul(normalizer,tf.nn.dropout(x=flat,
                 keep_prob=keep_prob))
             dense1 = tf.layers.dense(inputs=dropout1,
