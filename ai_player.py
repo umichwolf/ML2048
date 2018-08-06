@@ -436,32 +436,33 @@ class Ai:
     def search(self,board):
         score_list = [0] * self._search_width
         move_list,logit_list = self.predict_policy(board)
-        print(move_list)
-        print(logit_list)
+        # print(move_list)
+        # print(logit_list)
+        # sparsity = len(board.zero_entries_list) / self._para['size']**2
         proba_list = np.exp(logit_list) / np.sum(np.exp(logit_list))
         path_list = np.random.choice(move_list,size=self._search_width,p=proba_list)
-        print(path_list)
+        # print(path_list)
         virtual_board = Board(self._para)
         for idx in range(self._search_width):
             move = path_list[idx]
             virtual_board.load_board(board)
-            virtual_board.print_board()
+            # virtual_board.print_board()
             print(move)
             virtual_board.move(move)
-            virtual_board.print_board()
+            # virtual_board.print_board()
             for jdx in range(self._search_depth):
                 virtual_board.next()
-                virtual_board.print_board()
+                # virtual_board.print_board()
                 temp_list,_ = self.predict_policy(virtual_board)
                 if temp_list == []:
                     break
                 move = temp_list[0]
-                print(move)
+                # print(move)
                 virtual_board.move(move)
-                virtual_board.print_board()
+                # virtual_board.print_board()
             if temp_list != []:
                 score_list[idx] = self.predict_value(virtual_board)
-                print(score_list)
+                # print(score_list)
         agg_score = [0] * len(move_list)
         counter = [1] * len(move_list)
         for move in path_list:
