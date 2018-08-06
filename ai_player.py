@@ -447,28 +447,29 @@ class Ai:
             move = path_list[idx]
             virtual_board.load_board(board)
             # virtual_board.print_board()
-            print(move)
+            # print(move)
             virtual_board.move(move)
             # virtual_board.print_board()
             for jdx in range(self._search_depth):
-                virtual_board.next()
                 # virtual_board.print_board()
-                temp_list,_ = self.predict_policy(virtual_board)
-                if temp_list == []:
+                tempmove_list,templogit_list = self.predict_policy(virtual_board)
+                if tempmove_list == []:
                     break
-                move = temp_list[0]
+                tempproba_list = np.exp(templogit_list) / np.sum(np.exp(templogit_list))
+                temppath_list = np.random.choice(tempmove_list,size=1,p=tempproba_list)
+                move = temppath_list[0]
                 # print(move)
                 virtual_board.move(move)
                 # virtual_board.print_board()
-            if temp_list != []:
+            if tempmove_list != []:
                 score_list[idx] = self.predict_value(virtual_board)
                 # print(score_list)
         agg_score = [0] * len(move_list)
-        counter = [1] * len(move_list)
+        counter = [0.00001] * len(move_list)
         for move in path_list:
             for idx in range(len(move_list)):
                 if move == move_list[idx]:
-                    agg_score[idx] += score_list[jdx]
+                    agg_score[idx] += score_list[idx]
                     counter[idx] += 1
                     break
         print(agg_score)
