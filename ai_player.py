@@ -247,9 +247,9 @@ class Ai:
                 dtype=tf.float32,name='keep_prob')
             normalizer = tf.placeholder(shape=[],dtype=tf.float32,
                 name='normalizer')
-            batch1 = self._batch_norm(x,1)
+            # batch1 = self._batch_norm(x,1)
             conv1 = tf.layers.conv2d(
-                inputs = batch1,
+                inputs = x,
                 filters = 10,
                 kernel_size = 2,
                 padding = 'same',
