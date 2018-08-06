@@ -464,12 +464,13 @@ class Ai:
                 score_list[idx] = self.predict_value(virtual_board)
                 # print(score_list)
         agg_score = [0] * len(move_list)
-        counter = [1] * len(move_list)
-        for move in path_list:
-            for idx in range(len(move_list)):
-                if move == move_list[idx]:
-                    agg_score[idx] += score_list[jdx]
-                    counter[idx] += 1
+        counter = [0.001] * len(move_list)
+        for idx in range(len(path_list)):
+            move = path_list[idx]
+            for jdx in range(len(move_list)):
+                if move == move_list[jdx]:
+                    agg_score[jdx] += score_list[idx]
+                    counter[jdx] += 1
                     break
         # print(agg_score)
         agg_score = [agg_score[idx]/counter[idx] for idx in range(len(move_list))]
