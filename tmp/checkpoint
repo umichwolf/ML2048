@@ -1,2 +1,2 @@
-model_checkpoint_path: "seartchtest_oldsearch_feng_8_5_8_value"
-all_model_checkpoint_paths: "seartchtest_oldsearch_feng_8_5_8_value"
+model_checkpoint_path: "seartchtest_8_6_3_value"
+all_model_checkpoint_paths: "seartchtest_8_6_3_value"
