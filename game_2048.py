@@ -198,6 +198,7 @@ class Game:
                 self._board.next()
                 endgame_flag = self._board.gameend()
             if endgame_flag == 1:
+                print('Round:',idx)
                 self._board.print_board()
                 print('Game over!')
             position = player.insert_cache_queue(np.max(self._board))
