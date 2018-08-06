@@ -296,10 +296,10 @@ class Ai:
             'normalizer:0': self._keep_prob}
         prediction,_,_ = self._policy_graph.get_collection('output')
         result = self._policy_sess.run(prediction,feed_dict=feed_dict)
-        order = np.argsort(result)[::-1]
-        move_sequence = [self._move_list[order[0,idx]]
-            for idx in range(len(order[0]))]
-        return move_sequence
+        # order = np.argsort(result)[::-1]
+        # move_sequence = [self._move_list[order[0,idx]]
+        #     for idx in range(len(order[0]))]
+        return result[0]
 
     def _predict_value(self,board):
         feed_dict = {'features:0':board,
@@ -410,12 +410,16 @@ class Ai:
         data = self._log_board(board)
         data = self._convert_board(data)
         move_list = []
-        for move in self._predict_policy(data):
+        logit_list = []
+        logits = self._predict_policy(data)
+        for idx in range(len(self._move_list)):
+            move = self._move_list[idx]
             self._virtual_board.load_board(board)
             tag = self._virtual_board.move(move,quiet=1)
             if tag == 1:
+                logit_list.append(logits[idx])
                 move_list.append(move)
-        return move_list
+        return move_list,logit_list
 
     def move(self,board):
         if self._para != board.para:
@@ -425,34 +429,51 @@ class Ai:
         self._current_move = None
         self._best_value = -1
         self._current_value = 0
-        self.search(board,self._search_depth)
+        self.search(board)
         # print(self._best_move)
         return self._best_move
 
-    def search(self,board,depth):
-        if depth == self._search_depth:
-            move_list = self.predict_policy(board)[:4]
-        else:
-            move_list = self.predict_policy(board)[:1]
-        if move_list == []:
-            self._current_value += 0
-        if depth == 0:
-            self._current_value += self.predict_value(board)
-            return 1
-        for move in move_list:
-            if depth == self._search_depth:
-                self._current_value = 0
-                self._current_move = move
-            for idx in range(self._search_width):
-                self._virtual_board.load_board(board)
-                self._virtual_board.move(move)
-                self._virtual_board.next()
-                board_tmp = copy.deepcopy(self._virtual_board)
-                self.search(board_tmp,depth-1)
-            if depth == self._search_depth:
-                if self._best_value < self._current_value:
-                    self._best_move = self._current_move
-                    self._best_value = self._current_value
+    def search(self,board):
+        score_list = [0] * self._search_width
+        move_list,logit_list = self.predict_policy(board)
+        print(move_list)
+        print(logit_list)
+        proba_list = np.exp(logit_list) / np.sum(np.exp(logit_list))
+        path_list = np.random.choice(move_list,size=self._search_width,p=proba_list)
+        print(path_list)
+        virtual_board = Board(self._para)
+        for idx in range(self._search_width):
+            move = path_list[idx]
+            virtual_board.load_board(board)
+            virtual_board.print_board()
+            print(move)
+            virtual_board.move(move)
+            virtual_board.print_board()
+            for jdx in range(self._search_depth):
+                virtual_board.next()
+                virtual_board.print_board()
+                temp_list,_ = self.predict_policy(virtual_board)
+                if temp_list == []:
+                    break
+                move = temp_list[0]
+                print(move)
+                virtual_board.move(move)
+                virtual_board.print_board()
+            if temp_list != []:
+                score_list[idx] = self.predict_value(virtual_board)
+                print(score_list)
+        agg_score = [0] * len(move_list)
+        counter = [1] * len(move_list)
+        for move in path_list:
+            for idx in range(len(move_list)):
+                if move == move_list[idx]:
+                    agg_score[idx] += score_list[jdx]
+                    counter[idx] += 1
+                    break
+        print(agg_score)
+        agg_score = [agg_score[idx]/counter[idx] for idx in range(len(move_list))]
+        self._best_value = np.max(agg_score)
+        self._best_move = move_list[np.argmax(agg_score)]
 
 def main():
     end_flag = 0
