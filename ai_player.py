@@ -455,9 +455,10 @@ class Ai:
                 tempmove_list,templogit_list = self.predict_policy(virtual_board)
                 if tempmove_list == []:
                     break
-                tempproba_list = np.exp(templogit_list) / np.sum(np.exp(templogit_list))
-                temppath_list = np.random.choice(tempmove_list,size=1,p=tempproba_list)
-                move = temppath_list[0]
+                # tempproba_list = np.exp(templogit_list) / np.sum(np.exp(templogit_list))
+                # temppath_list = np.random.choice(tempmove_list,size=1,p=tempproba_list)
+                # move = temppath_list[0]
+                move = tempmove_list[0]
                 # print(move)
                 virtual_board.move(move)
                 # virtual_board.print_board()
