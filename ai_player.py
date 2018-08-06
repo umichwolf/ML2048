@@ -447,7 +447,7 @@ class Ai:
             move = path_list[idx]
             virtual_board.load_board(board)
             # virtual_board.print_board()
-            print(move)
+            # print(move)
             virtual_board.move(move)
             # virtual_board.print_board()
             for jdx in range(self._search_depth):
@@ -471,7 +471,7 @@ class Ai:
                     agg_score[idx] += score_list[jdx]
                     counter[idx] += 1
                     break
-        print(agg_score)
+        # print(agg_score)
         agg_score = [agg_score[idx]/counter[idx] for idx in range(len(move_list))]
         self._best_value = np.max(agg_score)
         self._best_move = move_list[np.argmax(agg_score)]

@@ -183,6 +183,7 @@ class Game:
         batch_size = eval(input('Batch size: '))
         counter_saved = 0
         for idx in range(rounds):
+            print('Round ',idx)
             self._game = list()
             self._board = Board(player.para)
             endgame_flag = self._board.gameend()
