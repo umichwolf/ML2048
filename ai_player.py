@@ -451,6 +451,7 @@ class Ai:
             virtual_board.move(move)
             # virtual_board.print_board()
             for jdx in range(self._search_depth):
+                virtual_board.next()
                 # virtual_board.print_board()
                 tempmove_list,templogit_list = self.predict_policy(virtual_board)
                 if tempmove_list == []:
