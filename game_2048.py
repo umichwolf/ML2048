@@ -25,6 +25,7 @@ class Game:
     4: load
     5: replay
     6: auto train ai
+    7: generate data by search
     0: exit
     """)
         if order == '1':
@@ -47,6 +48,10 @@ class Game:
             self.replay(input('Name of the game: '))
         if order == '6':
             self.auto_train_ai()
+        if order == '7':
+            parameter = {'size': eval(input('size: ')),
+                'odd_2': eval(input('odd of 2(between 0 and 1): '))}
+            self.gen_search_data(parameter)
         if order == '0':
             pass
 
@@ -157,6 +162,30 @@ class Game:
         if endgame_flag == 1:
             self._board.print_board()
             print('Game over!')
+        if input('Do you want to save the game?(y/n) ') == 'y':
+            self.save(input('Name of the game: '))
+        self.idle()
+
+    def gen_search_data(self,parameter):
+        player = Ai()
+        player.new('ss')
+        rounds = eval(input('Number of rounds: '))
+        for idx in range(rounds):
+            print('Round: ',idx)
+            self._board = Board(parameter)
+            endgame_flag = self._board.gameend()
+            while endgame_flag == 0:
+                self.push()
+                board = copy.deepcopy(self._board)
+                move = player.simple_search(board)
+                if self._board.move(move) == 0:
+                    print('AI error.')
+                    break
+                self.push(move)
+                self._board.next()
+                endgame_flag = self._board.gameend()
+            if endgame_flag == 1:
+                print('Game over!')
         if input('Do you want to save the game?(y/n) ') == 'y':
             self.save(input('Name of the game: '))
         self.idle()

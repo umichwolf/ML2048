@@ -409,11 +409,13 @@ class Ai:
     def predict_policy(self,board):
         data = self._log_board(board)
         data = self._convert_board(data)
+        logits = self._predict_policy(data)
+        return self._check_valid_move(board,logits)
+
+    def _check_valid_move(self,board,logits):
         move_list = []
         logit_list = []
-        logits = self._predict_policy(data)
-        for idx in range(len(self._move_list)):
-            move = self._move_list[idx]
+        for idx,move in enumerate(self._move_list):
             self._virtual_board.load_board(board)
             tag = self._virtual_board.move(move,quiet=1)
             if tag == 1:
@@ -432,6 +434,36 @@ class Ai:
         self.search(board)
         # print(self._best_move)
         return self._best_move
+
+    def simple_search(self,board):
+        move_list,_ = self._check_valid_move(board,[0]*self._para['size'])
+        path_list = move_list * self._search_width
+        score_list = [0] * len(path_list)
+        path_list.sort()
+        virtual_board = Board(self._para)
+        for idx,move in enumerate(path_list):
+            virtual_board.load_board(board)
+            virtual_board.move(move)
+            for jdx in range(self._search_depth):
+                virtual_board.next()
+                tempmove_list,_ = self._check_valid_move(virtual_board,
+                    [0]*self._para['size'])
+                if tempmove_list == []:
+                    break
+                tempmove = np.random.choice(tempmove_list)
+                virtual_board.move(tempmove)
+            if tempmove_list != []:
+                score_list[idx] = len(virtual_board.zero_entries_list)
+        agg_score = [0] * len(move_list)
+        counter = [0.00001] * len(move_list)
+        for idx,move in enumerate(path_list):
+            for jdx,tempmove in enumerate(move_list):
+                if move == tempmove:
+                    agg_score[jdx] += score_list[idx]
+                    counter[jdx] += 1
+                    break
+        agg_score = [agg_score[idx]/counter[idx] for idx in range(len(move_list))]
+        return move_list[np.argmax(agg_score)]
 
     def search(self,board):
         score_list = [0] * self._search_width
