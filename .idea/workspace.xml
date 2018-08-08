@@ -2,14 +2,83 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b34085bf-498d-406a-9dff-75cd06c5cf76" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/checkpoint" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_feng_8_6_2_params.pkl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_feng_8_6_2_policy.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_feng_8_6_2_policy.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_feng_8_6_2_policy.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_feng_8_6_2_value.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_feng_8_6_2_value.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_feng_8_6_2_value.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intui5_feng_8_5_8_params.pkl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intui5_feng_8_5_8_policy.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intui5_feng_8_5_8_policy.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intui5_feng_8_5_8_policy.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intui5_feng_8_5_8_value.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intui5_feng_8_5_8_value.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intui5_feng_8_5_8_value.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intuidepth5_feng_8_5_7_params.pkl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intuidepth5_feng_8_5_7_policy.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intuidepth5_feng_8_5_7_policy.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intuidepth5_feng_8_5_7_policy.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intuidepth5_feng_8_5_7_value.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intuidepth5_feng_8_5_7_value.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/searchtest_intuidepth5_feng_8_5_7_value.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_8_6_3_params.pkl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_8_6_3_policy.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_8_6_3_policy.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_8_6_3_policy.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_8_6_3_value.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_8_6_3_value.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_8_6_3_value.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_params.pkl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_params_params.pkl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_params_policy.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_params_policy.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_params_policy.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_params_value.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_params_value.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_params_value.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_policy.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_policy.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_policy.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_value.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_value.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_feng_8_5_11_value.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intui5_feng_8_6_1_params.pkl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intui5_feng_8_6_1_policy.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intui5_feng_8_6_1_policy.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intui5_feng_8_6_1_policy.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intui5_feng_8_6_1_value.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intui5_feng_8_6_1_value.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intui5_feng_8_6_1_value.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_1_feng_8_5_6_params.pkl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_1_feng_8_5_6_policy.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_1_feng_8_5_6_policy.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_1_feng_8_5_6_policy.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_1_feng_8_5_6_value.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_1_feng_8_5_6_value.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_1_feng_8_5_6_value.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_5_feng_8_5_6_params.pkl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_5_feng_8_5_6_policy.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_5_feng_8_5_6_policy.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_5_feng_8_5_6_policy.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_5_feng_8_5_6_value.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_5_feng_8_5_6_value.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_intuitiondepth_equal_5_feng_8_5_6_value.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_oldsearch_feng_8_5_8_params.pkl" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_oldsearch_feng_8_5_8_policy.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_oldsearch_feng_8_5_8_policy.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_oldsearch_feng_8_5_8_policy.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_oldsearch_feng_8_5_8_value.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_oldsearch_feng_8_5_8_value.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/seartchtest_oldsearch_feng_8_5_8_value.meta" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ai_player.py" afterPath="$PROJECT_DIR$/ai_player.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game_2048.py" afterPath="$PROJECT_DIR$/game_2048.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game_archives/cached_game-1" afterPath="$PROJECT_DIR$/game_archives/cached_game-1" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game_archives/cached_game0" afterPath="$PROJECT_DIR$/game_archives/cached_game0" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game_archives/cached_game1" afterPath="$PROJECT_DIR$/game_archives/cached_game1" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game_archives/cached_game2" afterPath="$PROJECT_DIR$/game_archives/cached_game2" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tmp/checkpoint" afterPath="$PROJECT_DIR$/tmp/checkpoint" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -20,11 +89,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="ai_player.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ai_player.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ai_player.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
-              <caret line="468" column="25" lean-forward="false" selection-start-line="468" selection-start-column="25" selection-end-line="468" selection-end-column="25" />
+            <state relative-caret-position="7843">
+              <caret line="341" column="18" lean-forward="false" selection-start-line="341" selection-start-column="18" selection-end-line="341" selection-end-column="18" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -32,12 +101,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="game_2048.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="board.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/board.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="414">
+              <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="game_2048.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/game_2048.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="159" column="59" lean-forward="false" selection-start-line="159" selection-start-column="59" selection-end-line="159" selection-end-column="59" />
-              <folding />
+            <state relative-caret-position="164">
+              <caret line="88" column="26" lean-forward="false" selection-start-line="88" selection-start-column="23" selection-end-line="88" selection-end-column="26" />
+              <folding>
+                <element signature="e#27#38#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -47,6 +130,11 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>print</find>
+      <find>game</find>
+      <find>archives</find>
+      <find>gamea</find>
+      <find>zero</find>
+      <find>pow</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -60,7 +148,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-9" />
     <option name="y" value="-9" />
     <option name="width" value="1932" />
@@ -167,15 +255,26 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1048" extended-state="7" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25349087" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32918552" sideWeight="0.49785176" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32918552" sideWeight="0.5021482" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32918552" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32918552" sideWeight="0.49785176" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32918552" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -186,7 +285,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -195,7 +293,14 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="1" />
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/game_2048.py</url>
+          <line>2</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="2" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -214,24 +319,38 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3588">
           <caret line="159" column="59" lean-forward="false" selection-start-line="159" selection-start-column="59" selection-end-line="159" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game_2048.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="159" column="59" lean-forward="false" selection-start-line="159" selection-start-column="59" selection-end-line="159" selection-end-column="59" />
-          <folding />
+          <folding>
+            <element signature="e#27#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ai_player.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="468" column="25" lean-forward="false" selection-start-line="468" selection-start-column="25" selection-end-line="468" selection-end-column="25" />
+        <state relative-caret-position="7843">
+          <caret line="341" column="18" lean-forward="false" selection-start-line="341" selection-start-column="18" selection-end-line="341" selection-end-column="18" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/board.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_2048.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="88" column="26" lean-forward="false" selection-start-line="88" selection-start-column="23" selection-end-line="88" selection-end-column="26" />
+          <folding>
+            <element signature="e#27#38#0" expanded="true" />
           </folding>
         </state>
       </provider>

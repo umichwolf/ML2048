@@ -451,6 +451,7 @@ class Ai:
             virtual_board.move(move)
             # virtual_board.print_board()
             for jdx in range(self._search_depth):
+                virtual_board.next()
                 # virtual_board.print_board()
                 tempmove_list,templogit_list = self.predict_policy(virtual_board)
                 if tempmove_list == []:
@@ -462,7 +463,8 @@ class Ai:
                 virtual_board.move(move)
                 # virtual_board.print_board()
             if tempmove_list != []:
-                score_list[idx] = self.predict_value(virtual_board)
+                #score_list[idx] = self.predict_value(virtual_board)
+                score_list[idx] = len(virtual_board._zero_entries_list)
                 # print(score_list)
         agg_score = [0] * len(move_list)
         counter = [0.00001] * len(move_list)
