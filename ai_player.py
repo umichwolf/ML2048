@@ -4,6 +4,28 @@ import copy
 import numpy as np
 from board import Board
 
+def load_game(filename):
+    gamedata = []
+    with open(filename,'r') as f:
+        for line in f:
+            gamedata.append(eval(line))
+    with open(filename+'.para','r') as f:
+        para = eval(f.read())
+    return gamedata,para
+
+def split_train_test(filename,portion):
+    gamedata,_ = load_game(filename)
+    size = int(len(gamedata) * portion)
+    np.random.shuffle(gamedata)
+    with open(filename+'-test','w') as f:
+        for idx in range(size):
+            f.write(str(gamedata[idx]))
+            f.write('\n')
+    with open(filename+'-train','w') as f:
+        for idx in range(size,len(gamedata)):
+            f.write(str(gamedata[idx]))
+            f.write('\n')
+
 class Ai:
     """
     This class implement the ai player consisting of value networks,
@@ -339,15 +361,6 @@ class Ai:
                     idx, self._policy_sess.run(loss,feed_dict)))
             self._policy_sess.run(train_op,feed_dict)
 
-    def _load_game(self,filename):
-        gamedata = []
-        with open(self._game_path+filename,'r') as f:
-            for line in f:
-                gamedata.append(eval(line))
-        with open(self._game_path+filename+'.para','r') as f:
-            para = eval(f.read())
-        return gamedata,para
-
     def _game_type_is(self,para):
         return True if self._para == para else False
 
@@ -367,7 +380,7 @@ class Ai:
         data = []
         for filename in filenames:
             print(filename)
-            gamedata,para = self._load_game(filename)
+            gamedata,para = load_game(self._game_path+filename)
             if not self._game_type_is(para):
                 print(filename+' Data Type Not Match!')
                 continue
