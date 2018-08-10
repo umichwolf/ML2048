@@ -13,6 +13,16 @@ def load_game(filename):
         para = eval(f.read())
     return gamedata,para
 
+def split_small_portion(filename,portion):
+    with open(filename,'r') as f:
+        with open(filename+'-s','w') as fw:
+            for line in f:
+                if np.random.uniform() < portion:
+                    fw.write(line)
+    with open(filename+'.para','r') as f:
+        with open(filename+'-s.para','w') as fw:
+            fw.write(f.read())
+
 def split_train_test(filename,portion):
     gamedata,para = load_game(filename)
     size = int(len(gamedata) * portion)
@@ -273,9 +283,9 @@ class Ai:
                 dtype=tf.float32,name='keep_prob')
             normalizer = tf.placeholder(shape=[],dtype=tf.float32,
                 name='normalizer')
-            batch1 = self._batch_norm(x,1)
+            # batch1 = self._batch_norm(x,1)
             conv1 = tf.layers.conv2d(
-                inputs = batch1,
+                inputs = x,
                 filters = 10,
                 kernel_size = 2,
                 padding = 'same',
@@ -307,7 +317,7 @@ class Ai:
             loss = tf.reduce_mean(
                 tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels,
                     logits=dense2))
-            optimizer = tf.train.AdamOptimizer(learning_rate=0.01)
+            optimizer = tf.train.AdamOptimizer(learning_rate=1)
             train_op = optimizer.minimize(loss=loss,
                 global_step=global_step)
             tf.add_to_collection('output',dense2)
@@ -333,13 +343,11 @@ class Ai:
         labels = [entry[-1] for entry in testdata]
         boards = self._log_board(boards)
         boards = self._convert_board(boards)
-        logits = self._predict_policy(boards)
-        print(logits[:5])
-        print(np.argmax(logits,axis=1))
-        pred_labels = [self._move_list[i] for i in np.argmax(logits,axis=1)]
         score = 0
-        for idx,label in enumerate(labels):
-            if label == pred_labels[idx]:
+        for idx,board in enumerate(boards):
+            logits = self._predict_policy(board)
+            pred_label = self._move_list[np.argmax(logits[0])]
+            if labels[idx] == pred_label:
                 score += 1
         score = score / len(labels)
         return score
@@ -395,7 +403,7 @@ class Ai:
         data = np.ma.log2(data).filled(0)
         return data
 
-    def learn(self,batch_size,filenames,quiet=0):
+    def learn(self,batch_size,filenames,frac_data=1,quiet=0):
         p_labels = []
         v_scores = []
         data = []
@@ -415,11 +423,11 @@ class Ai:
             # n_zeroes.extend([0]*self._intuition_depth)
             v_scores.extend(max_value)
             data.extend([gamedata[idx][:-1] for idx in range(length)])
-        n_iter = len(data)
         data = self._log_board(data)
         data = self._convert_board(data)
         v_scores = self._log_board(v_scores)
         # v_scores = np.array(v_scores)
+        n_iter = int(frac_data * len(data))
         if quiet == 0:
             choose_net = input(
             '''Which net do you want to train:
@@ -566,8 +574,9 @@ Choose the option from the list:
         if order == '3':
             filenames = input('Game name: ')
             filenames = filenames.split()
-            batch_size = eval(input('Epochs: '))
-            ai_player.learn(batch_size,filenames)
+            batch_size = eval(input('Batch size: '))
+            frac_data = eval(input('Fraction of data: '))
+            ai_player.learn(batch_size,filenames,frac_data)
             save_order = input('Do you want to save it? (y/n) ')
             if save_order == 'y':
                 ai_player.save()
