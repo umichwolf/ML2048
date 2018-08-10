@@ -14,7 +14,7 @@ def load_game(filename):
     return gamedata,para
 
 def split_train_test(filename,portion):
-    gamedata,_ = load_game(filename)
+    gamedata,para = load_game(filename)
     size = int(len(gamedata) * portion)
     np.random.shuffle(gamedata)
     with open(filename+'-test','w') as f:
@@ -25,6 +25,10 @@ def split_train_test(filename,portion):
         for idx in range(size,len(gamedata)):
             f.write(str(gamedata[idx]))
             f.write('\n')
+    with open(filename+'-test.para','w') as f:
+        f.write(str(para))
+    with open(filename+'-train.para','w') as f:
+        f.write(str(para))
 
 class Ai:
     """
@@ -32,7 +36,7 @@ class Ai:
     policy networks and a search strategy.
     It can play 2048 games and also train itself after several games.
     """
-    def __init__(self,path='./tmp/',game_path='./game_archives/'):
+    def __init__(self,path='./tmp/',game_path='./test_files/'):
         self._keep_prob = 0.7
         self._path = path
         self._game_path = game_path
@@ -321,7 +325,24 @@ class Ai:
         # order = np.argsort(result)[::-1]
         # move_sequence = [self._move_list[order[0,idx]]
         #     for idx in range(len(order[0]))]
-        return result[0]
+        return result
+
+    def score_policy(self,testfile):
+        testdata,_ = load_game(self._game_path+testfile)
+        boards = [entry[:-1] for entry in testdata]
+        labels = [entry[-1] for entry in testdata]
+        boards = self._log_board(boards)
+        boards = self._convert_board(boards)
+        logits = self._predict_policy(boards)
+        print(logits[:5])
+        print(np.argmax(logits,axis=1))
+        pred_labels = [self._move_list[i] for i in np.argmax(logits,axis=1)]
+        score = 0
+        for idx,label in enumerate(labels):
+            if label == pred_labels[idx]:
+                score += 1
+        score = score / len(labels)
+        return score
 
     def _predict_value(self,board):
         feed_dict = {'features:0':board,
@@ -423,7 +444,7 @@ class Ai:
         data = self._log_board(board)
         data = self._convert_board(data)
         logits = self._predict_policy(data)
-        return self._check_valid_move(board,logits)
+        return self._check_valid_move(board,logits[0])
 
     def _check_valid_move(self,board,logits):
         move_list = []
@@ -532,27 +553,28 @@ Choose the option from the list:
     1. Build a new ai player
     2. Load an ai player
     3. Train the ai player
-    4. Exit
+    4. Test the policy network
+    0. Exit
     ''')
         if order == '1':
-            name = input('name: ')
-            size = eval(input('size: '))
-            ratio = eval(input('odd of 2(between 0 and 1): '))
-            para = {'size': size, 'odd_2': ratio}
+            name = input('Name: ')
             ai_player = Ai()
             ai_player.new(name)
         if order == '2':
             ai_player = Ai()
-            ai_player.load(input('name: '))
+            ai_player.load(input('Name: '))
         if order == '3':
-            filenames = input('game name: ')
+            filenames = input('Game name: ')
             filenames = filenames.split()
-            batch_size = eval(input('epochs: '))
+            batch_size = eval(input('Epochs: '))
             ai_player.learn(batch_size,filenames)
             save_order = input('Do you want to save it? (y/n) ')
             if save_order == 'y':
                 ai_player.save()
         if order == '4':
+            score = ai_player.score_policy(input('Test file name: '))
+            print('Accuracy: ',score)
+        if order == '0':
             end_flag = 1
 
 if __name__ == '__main__':
