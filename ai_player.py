@@ -291,36 +291,41 @@ class Ai:
                 padding = 'same',
                 activation = tf.nn.relu
             )
-            batch2 = self._batch_norm(conv1,10)
+            # batch2 = self._batch_norm(conv1,10)
             conv2 = tf.layers.conv2d(
-                inputs = batch2,
-                filters = 10,
-                kernel_size = 3,
+                inputs = conv1,
+                filters = 20,
+                kernel_size = 2,
                 padding = 'same',
                 activation = tf.nn.relu
             )
-            batch3 = self._batch_norm(conv2,10)
-            flat = tf.reshape(batch3,shape=[-1,size*size*10])
-            dropout1 = tf.scalar_mul(normalizer,tf.nn.dropout(x=flat,
-                keep_prob=keep_prob))
-            dense1 = tf.layers.dense(inputs=dropout1,
-                units=20,
+            # batch3 = self._batch_norm(conv2,10)
+            flat = tf.reshape(conv2,shape=[-1,size*size*20])
+            dense1 = tf.layers.dense(inputs=flat,
+                units=100,
                 activation = tf.nn.relu,
                 name='dense1'
                 )
-            dropout2 = tf.nn.dropout(x=dense1,
-                keep_prob=keep_prob) * normalizer
+            dropout1 = tf.scalar_mul(normalizer,tf.nn.dropout(x=dense1,
+                keep_prob=keep_prob))
             dense2 = tf.layers.dense(
+                inputs=dropout1,
+                units=100,
+                activation = tf.nn.relu,
+                name='dense2')
+            dropout2 = tf.nn.dropout(x=dense2,
+                keep_prob=keep_prob) * normalizer
+            dense3 = tf.layers.dense(
                 inputs=dropout2,
                 units=4)
             onehot_labels = tf.one_hot(indices=y,depth=4)
             loss = tf.reduce_mean(
                 tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels,
-                    logits=dense2))
-            optimizer = tf.train.AdamOptimizer(learning_rate=1)
+                    logits=dense3))
+            optimizer = tf.train.AdamOptimizer(learning_rate=0.01)
             train_op = optimizer.minimize(loss=loss,
                 global_step=global_step)
-            tf.add_to_collection('output',dense2)
+            tf.add_to_collection('output',dense3)
             tf.add_to_collection('output',train_op)
             tf.add_to_collection('output',loss)
             init_op = tf.global_variables_initializer()
@@ -341,10 +346,10 @@ class Ai:
         testdata,_ = load_game(self._game_path+testfile)
         boards = [entry[:-1] for entry in testdata]
         labels = [entry[-1] for entry in testdata]
-        boards = self._log_board(boards)
-        boards = self._convert_board(boards)
         score = 0
         for idx,board in enumerate(boards):
+            board = self._log_board(board)
+            board = self._convert_board(board)
             logits = self._predict_policy(board)
             pred_label = self._move_list[np.argmax(logits[0])]
             if labels[idx] == pred_label:
