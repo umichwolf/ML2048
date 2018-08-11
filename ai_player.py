@@ -47,7 +47,7 @@ class Ai:
     It can play 2048 games and also train itself after several games.
     """
     def __init__(self,path='./tmp/',game_path='./test_files/'):
-        self._keep_prob = 0.7
+        self._keep_prob = 1.
         self._path = path
         self._game_path = game_path
         self._name = None
@@ -322,7 +322,7 @@ class Ai:
             loss = tf.reduce_mean(
                 tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels,
                     logits=dense3))
-            optimizer = tf.train.AdamOptimizer(learning_rate=0.01)
+            optimizer = tf.train.AdamOptimizer(learning_rate=0.001)
             train_op = optimizer.minimize(loss=loss,
                 global_step=global_step)
             tf.add_to_collection('output',dense3)
