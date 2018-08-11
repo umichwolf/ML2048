@@ -1,2 +1,2 @@
-model_checkpoint_path: "policytest_value"
-all_model_checkpoint_paths: "policytest_value"
+model_checkpoint_path: "policynet_value"
+all_model_checkpoint_paths: "policynet_value"
