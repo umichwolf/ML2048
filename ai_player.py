@@ -160,7 +160,6 @@ class Ai:
             else:
                 print('Model Restored!')
 
-
     def new(self,name):
         ckpt_exists = tf.train.checkpoint_exists(self._path + name + '_value')
         if ckpt_exists:
@@ -302,7 +301,7 @@ class Ai:
             # batch3 = self._batch_norm(conv2,10)
             flat = tf.reshape(conv2,shape=[-1,size*size*20])
             dense1 = tf.layers.dense(inputs=flat,
-                units=100,
+                units=1000,
                 activation = tf.nn.relu,
                 name='dense1'
                 )
@@ -310,7 +309,7 @@ class Ai:
                 keep_prob=keep_prob))
             dense2 = tf.layers.dense(
                 inputs=dropout1,
-                units=100,
+                units=1000,
                 activation = tf.nn.relu,
                 name='dense2')
             dropout2 = tf.nn.dropout(x=dense2,
